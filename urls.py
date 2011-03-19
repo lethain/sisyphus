@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-    (r'$', 'blog.views.frontpage'),
+    (r'$', 'sisyphus.views.frontpage'),
 )

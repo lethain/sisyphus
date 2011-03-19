@@ -1,0 +1,114 @@
+body, html {
+    font-family: “Lucida Sans Unicode”, “Lucida Grande”, Verdana, Arial, Helvetica, sans-serif;
+    line-height: 125%;
+    background: #FCFCFC;
+}
+
+h1, h2, #hd {
+    font-family: Georgia, Serif;
+}
+
+/*
+ * Shared Module and Body Stuff
+ */
+.module, #body, #ft {
+    border: 3px solid #AAA;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    background: #FFF;
+    padding: 5px;
+}
+
+/*
+ * Header CSS
+ */
+
+#hd {
+    margin: 5px 0 5px 0;
+}
+
+#hd h1 {
+    font-weight: bold;
+    padding: 5px;
+}
+
+#hd h1 a {
+     padding: 4px;
+     color:#fff;
+     background:#333;
+     text-decoration:none;
+     text-shadow:1px 1px 1px rgba(0,0,0,0.75); /* Text shadow to lift it a little */
+     -moz-border-radius:5px;
+     -webkit-border-radius:5px;
+     border-radius:5px;
+}
+
+#hd h1 a:hover{
+    color:#fff;
+    background:#777;
+    background:rgba(107,12,54,0.75); /* It'll look nice semi-transparent */
+}
+
+#searchbox {
+    height: 26px;
+    width: 150px;
+     -moz-border-radius:5px;
+     -webkit-border-radius:5px;
+     border-radius:5px;
+}
+#searchbutton {
+    font-weight:bold;
+    width: 60px;
+    height: 26px;
+    color:#fff;
+    background:#333;
+    border:#6b0c36;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    cursor: pointer;
+}
+
+#searchbutton:hover{
+    color:#fff;
+    background:#6b0c36;
+    background:rgba(107,12,54,0.75); /* It'll look nice semi-transparent */
+}
+
+/*
+ * Footer
+ */
+#ft {
+    text-align: center;
+    border: 3px solid #CCC;
+    color: #AAA;
+    margin-top: 10px;
+    padding: 5px 0 5px 0;
+}
+#ft a {
+    color: #777;
+    text-decoration: none;
+}
+
+
+/*
+ * Right-Rail Modules CSS
+ */
+
+.module {
+    margin: 0 0 10px 0;
+}
+
+.module h2 {
+    border-bottom: 3px solid #333;
+    margin-bottom: 5px;
+}
+
+/*
+ * Main content area
+ */
+#body h1 {
+    border-bottom: 1px solid #AAA;
+    font-size: 150%;
+}

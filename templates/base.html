@@ -1,7 +1,53 @@
 <html>
 <head>
 <title>{% block title %}Irrational Exuberance{% endblock %}</title>
+<link href="/static/grid.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/static/nav.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/static/sisyphus.css" media="screen" rel="stylesheet" type="text/css" />
 <body>
-{% block body %}{% endblock %}
+<div class="container container_12">
+{% include "header.html" %}
+
+<div class="grid_9">
+  <div id="body">
+  {% block body %}{% endblock %}
+  </div>
+</div>
+<div id="modules" class="grid_3">
+{% block modules %}
+<div class="module">
+<h2>Will Larson</h2>
+<img src="/static/author.png">
+<p>Your delightful host.<br>
+Developer at <a href="http://digg.com/">Digg</a>.<br>
+Used to <a href="http://developer.yahoo.com/search/boss/">Yahoo! BOSS</a>.</p>
+</div>
+
+<div class="module">
+<h2>Trending Content</h2>
+<ul class="story-list">
+<li>A</li>
+<li>C</li>
+<li>D</li>
+</div>
+
+<div class="module">
+<h2>Recent Changes</h2>
+<ul class="story-list">
+<li>A</li>
+<li>C</li>
+<li>D</li>
+</div>
+
+<div class="module">
+<h2>Analytics</h2>
+<p>Recent activity..</p>
+</div>
+{% endblock %}
+</div>
+
+<div class='clear'>&nbsp;</div> 
+{% include "footer.html" %}
+</div>
 </body>
 </html>
