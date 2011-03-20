@@ -19,6 +19,10 @@ h1, h2, #hd {
     background: #FFF;
     padding: 5px;
 }
+#body {
+    border: 3px solid #555;
+    padding: 10px 5px 5px 10px;
+}
 
 /*
  * Header CSS
@@ -36,7 +40,7 @@ h1, h2, #hd {
 #hd h1 a {
      padding: 4px;
      color:#fff;
-     background:#333;
+     background:#999;
      text-decoration:none;
      text-shadow:1px 1px 1px rgba(0,0,0,0.75); /* Text shadow to lift it a little */
      -moz-border-radius:5px;
@@ -62,7 +66,7 @@ h1, h2, #hd {
     width: 60px;
     height: 26px;
     color:#fff;
-    background:#333;
+    background:#999;
     border:#6b0c36;
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
@@ -98,17 +102,64 @@ h1, h2, #hd {
 
 .module {
     margin: 0 0 10px 0;
+    color: #444
+}
+
+#body .tag a, .module a {
+    color: #55A;
+    text-decoration: none;
+}
+#body .tag a:hover, .module a:hover {
+    text-decoration: underline;
 }
 
 .module h2 {
-    border-bottom: 3px solid #333;
+    border-bottom: 3px solid #999;
     margin-bottom: 5px;
+    color: #555;
 }
 
 /*
  * Main content area
  */
-#body h1 {
+#body h2 {
     border-bottom: 1px solid #AAA;
+    padding-bottom: 1px;
+    margin-bottom: 10px;
     font-size: 150%;
+}
+
+#body p {
+    margin-bottom: 20px;
+}
+
+#body h2 a {
+    text-decoration: none;
+}
+
+#body .date {
+    float: right;
+    padding-right: 10px;
+    color: #777;
+    font-size: 90%;
+}
+
+#body .summary {
+    margin: 5px 10px 10px 20px;
+    width: 400px;
+}
+
+#body .tag {
+    margin-right: 15px;
+    font-size: 90%;
+}
+
+#body .pagination.bottom {
+      border-top: 1px solid #AAA;
+      padding: 5px 0 0 20px;
+
+}
+
+#body .page {
+      margin-bottom: 10px;
 }

@@ -1,0 +1,8 @@
+<div class="pagination bottom">
+  <ul class="pager">
+    {% if pager_is_not_first %}<li><a href="#">&larr;</a></li>{% endif %}
+    {% for page_number in pager_pages %}<li><a href="#">{{ page_number }}</a></li>{% endfor %}
+    {% if pager_is_not_end %}<li><a href="#">&rarr;</a></li>{% endif %}
+  </ul>
+</div>
+<br class="clear">
