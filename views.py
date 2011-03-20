@@ -27,13 +27,15 @@ def trending_module(limit=3, cli=None):
     "Create default trending module."
     return storylist_module(sisyphus.models.PAGE_ZSET_BY_TREND,
                             "Trending",
-                            "/list/trending/")
+                            "/list/trending/",
+                            limit=limit)
 
 def recent_module(limit=3, cli=None):
     "Create default trending module."
     return storylist_module(sisyphus.models.PAGE_ZSET_BY_TIME,
                             "Recent",
-                            "/list/recent/")
+                            "/list/recent/",
+                            limit=limit)
 
 def similar_pages_module(page, limit=3, cli=None):
     """
@@ -46,14 +48,16 @@ def similar_pages_module(page, limit=3, cli=None):
     else:
         return None
     
-
-def add_module(cli=None):
-    cli = cli or sisyphus.models.redis_client()
-    objects = sisyphus.models.get_pages(cli=cli, limit=3)
-    return { 'title': 'Trending',
-             'pages': objects,
-             'more_link': '/tags/',
-             }
+def default_modules(page, extras=[], limit=3, cli=None):
+    ""
+    modules = [(0.75, about_module(cli=cli)),
+               (0.5, trending_module(limit=limit, cli=cli)),
+               (0.25, recent_module(limit=limit, cli=cli)),
+               ]
+    modules += extras
+    active_modules = [ (x,y) for x,y in modules if x ]
+    active_modules.sort(reverse=True)
+    return [ y for x,y in active_modules ]
 
 def page(request, slug):
     "Render a page."
@@ -61,15 +65,10 @@ def page(request, slug):
     object = sisyphus.models.get_page(slug, cli=cli)
     object = sisyphus.models.convert_pub_date_to_datetime(object)
 
-    modules = (about_module(cli=cli),
-               trending_module(cli=cli),
-               similar_pages_module(object, cli=cli),
-               recent_module(cli=cli),
-               analytics_module(cli=cli))
-    active_modules = tuple(x for x in modules if x)
-
+    extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
+                     (0.1, analytics_module(cli=cli))]
     context = { 'page': object,
-                'modules': active_modules,
+                'modules': default_modules(object, extra_modules, cli=cli),
                 }
 
     return render_to_response('sisyphus/page_detail.html', context)
@@ -91,6 +90,7 @@ def frontpage(request):
                'pager_is_not_first': offset != 0,
                'pager_is_not_end': start_page != num_pages,
                'pager_pages': pages,
+                'modules': default_modules(object, limit=6, cli=cli),
                }
     
     return render_to_response('sisyphus/page_list.html', context)
