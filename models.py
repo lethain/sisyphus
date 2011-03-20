@@ -30,6 +30,8 @@ TAG_PAGES_ZSET_BY_TREND = "tag_pages_by_trend.%s"
 PAGE_ZSET_BY_TIME = "pages_by_time"
 PAGE_ZSET_BY_TREND = "pages_by_trend"
 PAGE_STRING = "page.%s"
+SIMILAR_PAGES_BY_TREND = "similar_pages.%s"
+SIMILAR_PAGES_EXPIRE = 60 * 60
 
 def redis_client(host="localhost", port=6379, db=0):
     return redis.Redis(host, port, db=db)
@@ -74,6 +76,19 @@ def get_pages(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None)
     cli = cli or redis_client()
     page_slugs = get_page_slugs(offset, limit, key, reverse, cli)
     return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
+
+def similar_pages(page, offset=0, limit=3, withscores=False, cli=None):
+    "Find top performing stories in similar tags."
+    cli = cli or redis_client()
+    tag_keys = [ TAG_PAGES_ZSET_BY_TREND % x for x in page.get('tags',[])]
+    if tag_keys:
+        sim_key = SIMILAR_PAGES_BY_TREND % page['slug']
+        cli.zunionstore(sim_key, tag_keys)
+        cli.expire(sim_key, SIMILAR_PAGES_EXPIRE)
+        page_slugs = cli.zrevrange(sim_key, offset, offset+limit-1, withscores=withscores)
+        return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
+    else:
+        return []
 
 def convert_pub_date_to_datetime(page):
     "Replace timestamps with datetimes."
