@@ -28,7 +28,7 @@ for post in models.get('lifeflow.entry', []):
              'tags': tags,
              'pub_date': int(time.mktime(datetime.datetime.strptime(fields['pub_date'],"%Y-%m-%d %H:%M:%S").timetuple())),
              'summary': fields['summary'],
-             'html': fields['body_html'],
+             'html': fields['body_html'].replace('/media/lifeflow', 'http://lethain.com/media/lifeflow'),
              }
     sisyphus.models.add_page(data)
 

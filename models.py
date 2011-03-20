@@ -90,4 +90,8 @@ def num_pages(key=PAGE_ZSET_BY_TIME, cli=None):
 
 def get_page(page_slug, cli=None):
     "Retrieve a page."
-    pass
+    cli = cli or redis_client()
+    resp = cli.get(PAGE_STRING % page_slug)
+    print PAGE_STRING % page_slug
+    return resp and json.loads(resp) or resp
+

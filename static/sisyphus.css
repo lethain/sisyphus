@@ -1,7 +1,7 @@
 body, html {
     font-family: “Lucida Sans Unicode”, “Lucida Grande”, Verdana, Arial, Helvetica, sans-serif;
     line-height: 125%;
-    background: #FCFCFC;
+    background: #F0F0F0;
 }
 
 h1, h2, #hd {
@@ -23,6 +23,7 @@ h1, h2, #hd {
     border: 3px solid #555;
     padding: 10px 5px 5px 10px;
 }
+
 
 /*
  * Header CSS
@@ -105,10 +106,14 @@ h1, h2, #hd {
     color: #444
 }
 
-#body .tag a, .module a {
+#body a, .module a {
     color: #55A;
     text-decoration: none;
 }
+#body a:visited, .module a:visited {
+    color: #399;
+}
+
 #body .tag a:hover, .module a:hover {
     text-decoration: underline;
 }
@@ -125,6 +130,7 @@ h1, h2, #hd {
 #body h2 {
     border-bottom: 1px solid #AAA;
     padding-bottom: 1px;
+    margin: 20px 0 10px 0;
     margin-bottom: 10px;
     font-size: 150%;
 }
@@ -144,10 +150,22 @@ h1, h2, #hd {
     font-size: 90%;
 }
 
-#body .summary {
-    margin: 5px 10px 10px 20px;
+#body .summary, #body .page .text p, #body .page pre, #body .page li {
+    margin: 10px 10px 10px 20px;
     width: 400px;
 }
+
+#body table {
+    margin: 10px 10px 10px 30px;
+}
+#body table td {
+    border: 1px solid #777;
+    padding: 5px;
+}
+#body table thead {
+    font-weight: bold;
+}
+
 
 #body .tag {
     margin-right: 15px;
@@ -162,4 +180,25 @@ h1, h2, #hd {
 
 #body .page {
       margin-bottom: 10px;
+}
+
+#body .page .text {
+    margin-top: 20px;
+}
+
+#body .page .text ul {
+    margin: 10px 10px 10px 50px;
+    list-style: disc;
+}
+#body .page .text ol {
+    margin: 10px 10px 10px 50px;
+}
+
+#body .page .text li {
+    margin-bottom: 5px;
+}
+
+#body .page .text img {
+    max-width: 620px;
+    border: 2px solid #CCC;
 }

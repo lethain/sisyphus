@@ -2,6 +2,16 @@
 from django.shortcuts import render_to_response
 import sisyphus.models
 
+def page(request, slug):
+    "Render a page."
+    cli = sisyphus.models.redis_client()
+    object = sisyphus.models.get_page(slug, cli=cli)
+    object = sisyphus.models.convert_pub_date_to_datetime(object)
+    context = { 'page': object }
+    print context
+
+    return render_to_response('sisyphus/page_detail.html', context)
+
 def frontpage(request):
     "Render frontpage."
     cli = sisyphus.models.redis_client()
