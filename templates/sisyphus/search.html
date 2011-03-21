@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="pages">
+{% if pages %}
 {% for page in pages %}
   <div class="page">
     <h2><a href="/{{ page.slug }}/">{{ page.title }}</a></h2>
@@ -10,8 +11,11 @@
     <p class="summary">{{ page.summary|safe }}</p>
   </div>
 {% endfor %}
-</div>
-{% include "sisyphus/pager.html" %}
+{% else %}
+<h2>No results for <code>{{ query }}</code>.</h2>
+<p>Try another query...</p>
+{% endif %}
 
+</div>
 {% endblock %}
 

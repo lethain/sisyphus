@@ -4,8 +4,9 @@ import sisyphus.models
 import datetime
 import time
 
-raw_data = sys.stdin.read()
-data = json.loads(raw_data)
+#raw_data = sys.stdin.read()
+#data = json.loads(raw_data)
+data = json.loads(open('today.json','r').read())
 
 models = {}
 

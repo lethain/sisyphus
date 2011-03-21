@@ -153,3 +153,19 @@ def frontpage(request):
     "Render frontpage."
     return story_list(request, "trending")
 
+def search(request):
+    "Search against blog."
+    cli = sisyphus.models.redis_client()
+    pages = []
+    query = ''
+    if 'q' in request.GET:
+        query = request.GET['q']
+        search_resp = sisyphus.models.search(query, cli=cli)
+        if search_resp:
+            pages = [ sisyphus.models.convert_pub_date_to_datetime(x) for x in search_resp ]
+    extra_modules = []
+    context = { 'pages': pages,
+                'query': query,
+                'modules': default_modules(None, extra_modules, cli=cli),
+                    }
+    return render_to_response('sisyphus/search.html', context)

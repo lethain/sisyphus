@@ -15,9 +15,15 @@ bucketed for the last 60 minutes, the last 24 hours,
 the last 7 days, last 4 weeks and lifespan.
 
 """
+
+from django.conf import settings
+
 import redis
 import time
 import datetime
+import whoosh.index 
+import whoosh.fields
+import whoosh.qparser
 try:
     import json
 except ImportError:
@@ -33,6 +39,28 @@ PAGE_ZSET_BY_TREND = "pages_by_trend"
 PAGE_STRING = "page.%s"
 SIMILAR_PAGES_BY_TREND = "similar_pages.%s"
 SIMILAR_PAGES_EXPIRE = 60 * 60
+
+PAGE_SCHEMA = whoosh.fields.Schema(title=whoosh.fields.TEXT(),
+                                   summary=whoosh.fields.TEXT(),
+                                   content=whoosh.fields.TEXT(),
+                                   slug=whoosh.fields.ID(stored=True),
+                                   )
+
+def search(raw_query, cli=None):
+    whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
+    pages = []
+    try:
+        searcher = whoosh_index.searcher()
+        query = whoosh.qparser.QueryParser('content', PAGE_SCHEMA).parse(raw_query)
+        search_resp = searcher.search(query, limit=None)
+        slugs = [ x['slug'] for x in search_resp ]
+        if slugs:
+            cli = cli or redis_client()
+            pages = [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in slugs]) ]
+    finally:
+        searcher.close()
+    return pages
+    
 
 def redis_client(host="localhost", port=6379, db=0):
     return redis.Redis(host, port, db=db)
@@ -63,6 +91,16 @@ def add_page(page, cli=None):
 
     for tag in page['tags']:
         add_page_to_tag(tag, slug, created=page['pub_date'], cli=cli)
+
+    # add to search index
+    try:
+        whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
+    except Exception, e:
+        whoosh_index = whoosh.index.create_in(settings.WHOOSH_INDEXDIR, PAGE_SCHEMA)
+    writer = whoosh_index.writer()
+    to_index = {'title': page['title'], 'summary':page['summary'], 'content':page['html'], 'slug':page['slug']}
+    writer.add_document(**to_index)
+    writer.commit()
 
 def get_page_slugs(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None, withscores=False):
     "Retrieve pages from global zsets."

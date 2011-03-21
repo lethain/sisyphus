@@ -7,8 +7,8 @@
     <li><a href="http://www.linkedin.com/pub/will-larson/3/b54/a44">Resume</a></li>
     <li><a href="/">Contact</a></li>
   </ul>
-    <form target="/search/" class="grid_3">
-      <input id="searchbox" name="q">
+    <form action="/search/" method="GET" class="grid_3">
+      <input id="searchbox" name="q" value="{{ query }}">
       <input id="searchbutton" type="submit" value="Search">
     </form>
 
