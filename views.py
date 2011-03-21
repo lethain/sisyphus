@@ -51,7 +51,7 @@ def tags_module(offset=0, limit=10, cli=None):
     tags = sisyphus.models.tags(offset, limit, cli=cli)
     html = ['<ul class="tags">'] + \
         [ '<li><a href="/tag/%s/">%s</a> (%s)</li>' % (x,x,y) for x,y in tags ] + \
-        ['<li><a href="/tags/">more&hellip;</a></li>', '</ul>']
+        ['<li><a href="/tags/">More&hellip;</a></li>', '</ul>']
     return { 'title': 'Tags', 'html':'\n'.join(html) }
 
 def recent_module(limit=3, page=None, cli=None):
@@ -85,23 +85,28 @@ def default_modules(page, extras=[], limit=3, cli=None):
     return [ y for x,y in active_modules ]
 
 def render_list(request, key, base_url, cli=None):
-    offset = 0
-    limit = 10
+    try:
+        offset = int(request.GET.get('offset', 0))
+    except ValueError:
+        offset = 0
+    try:
+        limit = int(request.GET.get('limit', 10))
+    except ValueError:
+        limit = 10
 
     page_dicts = sisyphus.models.get_pages(offset=offset, limit=limit, key=key, cli=cli)
     page_dicts = [ sisyphus.models.convert_pub_date_to_datetime(x) for x in page_dicts ]
     total_pages = sisyphus.models.num_pages(key=key, cli=cli)
-
-    # pagination data
     per_page = 10
-    num_pages = total_pages / per_page
-    start_page = offset / per_page
-    pages = range(start_page, num_pages)[:10]
+    pages = [ x for x in range(0, total_pages, per_page)]
 
     extra_modules = [(0.3, tags_module(limit=3, cli=cli))]
     context = {'pages': page_dicts,
-               'pager_is_not_first': offset != 0,
-               'pager_is_not_end': start_page != num_pages,
+               'pager_show': (len(page_dicts) >= per_page) or offset > per_page,
+               'pager_offset': offset,
+               'pager_next': offset + per_page,
+               'pager_prev': offset - per_page,
+               'pager_remaining': offset + per_page < total_pages,
                'pager_pages': pages,
                'modules': default_modules(None, extra_modules, limit=5, cli=cli),
                }    

@@ -215,3 +215,16 @@ ul.taglist li {
     font-size: 150%;
     margin: 10px 0 10px 10px;
 }
+
+/*
+ * Pagination
+ */
+.pagination {
+    padding-top: 10px;
+    border-top: 1px solid #AAA;
+}
+
+.pagination li {
+    float: left;
+    margin: 10px;
+}

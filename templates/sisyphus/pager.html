@@ -1,8 +1,16 @@
-<div class="pagination bottom">
-  <ul class="pager">
-    {% if pager_is_not_first %}<li><a href="#">&larr;</a></li>{% endif %}
-    {% for page_number in pager_pages %}<li><a href="#">{{ page_number }}</a></li>{% endfor %}
-    {% if pager_is_not_end %}<li><a href="#">&rarr;</a></li>{% endif %}
+{% if pager_show %}
+<div class="bottom">
+  <ul class="pagination">
+    {% if pager_offset %}<li><a href="?offset={{ pager_prev }}">&larr;</a></li>{% endif %}
+    {% for page_number in pager_pages %}
+    {% ifequal pager_offset page_number %}
+    <li>{{ page_number|add:"1" }}</li>
+    {% else %}
+    <li><a href="?offset={{ page_number }}">{{ page_number|add:"1" }}</a></li>
+    {% endifequal %}
+    {% endfor %}
+    {% if pager_remaining %}<li><a href="?offset={{ pager_next }}">&rarr;</a></li>{% endif %}
   </ul>
 </div>
 <br class="clear">
+{% endif %}

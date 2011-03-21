@@ -76,7 +76,10 @@ def get_pages(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None)
     "Retrieve pages data."
     cli = cli or redis_client()
     page_slugs = get_page_slugs(offset, limit, key, reverse, cli)
-    return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
+    if page_slugs:
+        return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
+    else:
+        return []
 
 def ensure_similar_pages_key(page, cli=None):
     "Make sure the data exists."
