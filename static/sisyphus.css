@@ -207,3 +207,11 @@ h1, h2, h3, h4, h5, #hd {
     max-width: 620px;
     border: 2px solid #CCC;
 }
+
+/*
+ * Tags page
+ */
+ul.taglist li {
+    font-size: 150%;
+    margin: 10px 0 10px 10px;
+}

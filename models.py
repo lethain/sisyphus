@@ -23,6 +23,7 @@ try:
 except ImportError:
     import simplejson as json
 
+EMPTY_ZSET = "empty_zset"
 TAG_ZSET_BY_TIME = "tags_by_times"
 TAG_ZSET_BY_PAGES = "tags_by_pages"
 TAG_PAGES_ZSET_BY_TIME = "tag_pages_by_time.%s"
@@ -42,7 +43,6 @@ def add_tag(slug, created=None, cli=None):
     if cli.zrank(TAG_ZSET_BY_TIME, slug) is None:
         created = created or int(time.time())
         cli.zadd(TAG_ZSET_BY_TIME, slug, created)
-        cli.zadd(TAG_ZSET_BY_PAGES, slug, 0)
 
 def add_page_to_tag(tag_slug, page_slug, created=None, cli=None):
     "Idempotently add a page to a tag."
@@ -51,6 +51,7 @@ def add_page_to_tag(tag_slug, page_slug, created=None, cli=None):
         created = created or int(time.time())
         cli.zadd(TAG_PAGES_ZSET_BY_TIME % tag_slug, page_slug, created)
         cli.zadd(TAG_PAGES_ZSET_BY_TREND % tag_slug, page_slug, created)
+        cli.zincrby(TAG_ZSET_BY_PAGES, tag_slug, 1)
 
 def add_page(page, cli=None):
     "Create a page."
@@ -77,18 +78,34 @@ def get_pages(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None)
     page_slugs = get_page_slugs(offset, limit, key, reverse, cli)
     return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
 
-def similar_pages(page, offset=0, limit=3, withscores=False, cli=None):
-    "Find top performing stories in similar tags."
+def ensure_similar_pages_key(page, cli=None):
+    "Make sure the data exists."
     cli = cli or redis_client()
     tag_keys = [ TAG_PAGES_ZSET_BY_TREND % x for x in page.get('tags',[])]
     if tag_keys:
         sim_key = SIMILAR_PAGES_BY_TREND % page['slug']
         cli.zunionstore(sim_key, tag_keys)
+        cli.zrem(sim_key, page['slug'])
         cli.expire(sim_key, SIMILAR_PAGES_EXPIRE)
+        return sim_key
+    return None
+
+def similar_pages(page, offset=0, limit=3, withscores=False, cli=None):
+    "Find top performing stories in similar tags."
+    cli = cli or redis_client()
+    sim_key = ensure_similar_pages_key(page, cli=cli)
+    if sim_key:
         page_slugs = cli.zrevrange(sim_key, offset, offset+limit-1, withscores=withscores)
         return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
     else:
         return []
+
+def tags(offset=0, limit=10, withscores=True, cli=None):
+    cli = cli or redis_client()
+    resp = cli.zrevrange(TAG_ZSET_BY_PAGES, offset, offset+limit-1, withscores=withscores)
+    if withscores:
+        resp = [ (x,int(y)) for x,y in resp ]
+    return resp
 
 def convert_pub_date_to_datetime(page):
     "Replace timestamps with datetimes."
@@ -100,13 +117,9 @@ def num_pages(key=PAGE_ZSET_BY_TIME, cli=None):
     cli = cli or redis_client()
     return cli.zcard(key)
 
-# import sisyphus.models; reload(sisyphus.models); sisyphus.models.get_pages(0, 10)    
-# python ./scripts/import_from_lifeflow.py < today.json
-
 def get_page(page_slug, cli=None):
     "Retrieve a page."
     cli = cli or redis_client()
     resp = cli.get(PAGE_STRING % page_slug)
-    print PAGE_STRING % page_slug
     return resp and json.loads(resp) or resp
 

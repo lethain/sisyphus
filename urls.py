@@ -1,6 +1,10 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-    (r'(?P<slug>[a-zA-Z0-9\-_]+)/$', 'sisyphus.views.page'),
-    (r'$', 'sisyphus.views.frontpage'),
+    (r'^tag/(?P<slug>[a-zA-Z0-9\-_]+)/$', 'sisyphus.views.tag_list'),
+    (r'^tags/$', 'sisyphus.views.tags_list'),
+    (r'^similar/(?P<slug>.+?)/$', 'sisyphus.views.similar_list'),
+    (r'^list/(?P<list_type>[a-z]+)/$', 'sisyphus.views.story_list'),
+    (r'^$', 'sisyphus.views.frontpage'),
+    (r'^(?P<slug>.+?)/$', 'sisyphus.views.page'),
 )
