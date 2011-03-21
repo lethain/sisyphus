@@ -1,8 +1,8 @@
-* change recent module to show context around current page
-* comments
 * analytics
   * implement analytics module
   * implement analytics
+* comments
+  * discus?
 * backwards compat
   * add media migration for old stuff
   * add 302s for existing lifeflow stuff

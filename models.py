@@ -119,6 +119,24 @@ def get_pages(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None)
     else:
         return []
 
+def get_nearby_pages(page, limit=3, cli=None):
+    ""
+    slug = page['slug']
+    pub_date = page['pub_date']
+    cli = cli or redis_client()
+    key = PAGE_ZSET_BY_TIME
+    rank = cli.zrank(key, slug)
+    start = max(rank-limit, 0)
+    end = max(limit, rank+limit)
+    page_slugs = cli.zrange(key, start, end)
+
+    if page_slugs:
+        return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
+    else:
+        return []
+
+    
+
 def ensure_similar_pages_key(page, cli=None):
     "Make sure the data exists."
     cli = cli or redis_client()

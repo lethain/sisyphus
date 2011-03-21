@@ -62,6 +62,12 @@ def recent_module(limit=3, page=None, cli=None):
                             limit=limit,
                             page=page)
 
+def context_module(page, limit=1, cli=None):
+    "Module contains stories surrounding."
+    pages = sisyphus.models.get_nearby_pages(page, limit, cli=cli)
+    pages.reverse()
+    return {"title":"Nearby", "pages":pages}
+
 def similar_pages_module(page, limit=3, cli=None):
     """
     Find stories which have a high overlap of tags with this one,
@@ -141,7 +147,8 @@ def page(request, slug):
     if object:
         object = sisyphus.models.convert_pub_date_to_datetime(object)
         extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
-                         (0.1, analytics_module(cli=cli))]
+                         (0.1, analytics_module(cli=cli)),
+                         (0.71, context_module(object, cli=cli))]
         context = { 'page': object,
                     'modules': default_modules(object, extra_modules, cli=cli),
                     }
