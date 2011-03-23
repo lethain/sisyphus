@@ -1,13 +1,34 @@
 "Views for blog application."
 from django.shortcuts import render_to_response
-from django.http import Http404
+from django.http import HttpResponse, Http404
 from django.template import RequestContext
 from django.conf import settings
 import sisyphus.models
+import django.utils.feedgenerator
 
 STORY_LIST_KEYS = { 'recent': sisyphus.models.PAGE_ZSET_BY_TIME,
                     'trending': sisyphus.models.PAGE_ZSET_BY_TREND,
                     }
+
+def feed(request, feed_url):
+    f = django.utils.feedgenerator.Rss201rev2Feed(
+        title=settings.RSS_TITLE,
+        link=settings.RSS_LINK,
+        description=settings.RSS_DESC,
+        language=settings.RSS_LANG,
+        author_name=settings.RSS_AUTHOR,
+        feed_url=settings.RSS_FEED_URL,
+        )
+    cli = sisyphus.models.redis_client()
+    page_dicts = sisyphus.models.get_pages(limit=25, cli=cli)
+    page_dicts = [ sisyphus.models.convert_pub_date_to_datetime(x) for x in page_dicts ]
+    for page in page_dicts:
+        f.add_item(title=page['title'],
+                   link="http://%s/%s/" % (settings.DOMAIN, page['slug']),
+                   pubdate=page['pub_date'],
+                   description=page['html'],
+                   )
+    return HttpResponse(f.writeString('UTF-8'), mimetype="application/rss+xml")
 
 def about_module(cli=None):
     "An 'About Me' module."
