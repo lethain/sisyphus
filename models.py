@@ -40,11 +40,20 @@ PAGE_STRING = "page.%s"
 SIMILAR_PAGES_BY_TREND = "similar_pages.%s"
 SIMILAR_PAGES_EXPIRE = 60 * 60
 
+PAGEVIEW_BONUS = 60 * 60 * 24
+
 PAGE_SCHEMA = whoosh.fields.Schema(title=whoosh.fields.TEXT(),
                                    summary=whoosh.fields.TEXT(),
                                    content=whoosh.fields.TEXT(),
                                    slug=whoosh.fields.ID(stored=True),
                                    )
+
+def track(page, cli=None):
+    ""
+    slug = page['slug']
+    cli.zincrby(PAGE_ZSET_BY_TREND, slug, PAGEVIEW_BONUS)
+    for tag_slug in page['tags']:
+        cli.zincrby(TAG_PAGES_ZSET_BY_TREND % tag_slug, slug, PAGEVIEW_BONUS)
 
 def search(raw_query, cli=None):
     whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)

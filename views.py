@@ -167,6 +167,7 @@ def page(request, slug):
     "Render a page."
     cli = sisyphus.models.redis_client()
     object = sisyphus.models.get_page(slug, cli=cli)
+    sisyphus.models.track(object, cli=cli)
     if object:
         object = sisyphus.models.convert_pub_date_to_datetime(object)
         extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
@@ -182,7 +183,7 @@ def page(request, slug):
 
 def frontpage(request):
     "Render frontpage."
-    return story_list(request, "trending")
+    return story_list(request, "recent")
 
 def search(request):
     "Search against blog."
