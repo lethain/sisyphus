@@ -228,3 +228,12 @@ ul.taglist li {
     float: left;
     margin: 10px;
 }
+
+#disqus_thread {
+    border-top: 3px solid #777;
+    padding: 10px;
+}
+
+#body #disqus_thread table td {
+    border: none;
+}

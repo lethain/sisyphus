@@ -1,6 +1,8 @@
 "Views for blog application."
 from django.shortcuts import render_to_response
 from django.http import Http404
+from django.template import RequestContext
+from django.conf import settings
 import sisyphus.models
 
 STORY_LIST_KEYS = { 'recent': sisyphus.models.PAGE_ZSET_BY_TIME,
@@ -44,7 +46,7 @@ def tags_list(request):
     context = {'tags': sisyphus.models.tags(limit=1000, cli=cli),
                'modules': default_modules(None, limit=5, cli=cli)
                }    
-    return render_to_response('sisyphus/tag_list.html', context)
+    return render_to_response('sisyphus/tag_list.html', context, context_instance=RequestContext(request))
 
 def tags_module(offset=0, limit=10, cli=None):
     "Create module for tags."
@@ -116,7 +118,7 @@ def render_list(request, key, base_url, cli=None):
                'pager_pages': pages,
                'modules': default_modules(None, extra_modules, limit=5, cli=cli),
                }    
-    return render_to_response('sisyphus/page_list.html', context)
+    return render_to_response('sisyphus/page_list.html', context, context_instance=RequestContext(request))
 
 def tag_list(request, slug):
     "Retrieve stories within a tag."
@@ -151,8 +153,9 @@ def page(request, slug):
                          (0.71, context_module(object, cli=cli))]
         context = { 'page': object,
                     'modules': default_modules(object, extra_modules, cli=cli),
+                    'disqus_shortname': settings.DISQUS_SHORTNAME,
                     }
-        return render_to_response('sisyphus/page_detail.html', context)
+        return render_to_response('sisyphus/page_detail.html', context, context_instance=RequestContext(request))
     else:
         raise Http404
 
@@ -175,4 +178,4 @@ def search(request):
                 'query': query,
                 'modules': default_modules(None, extra_modules, cli=cli),
                     }
-    return render_to_response('sisyphus/search.html', context)
+    return render_to_response('sisyphus/search.html', context, context_instance=RequestContext(request))
