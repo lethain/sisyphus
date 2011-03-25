@@ -2,7 +2,7 @@
 {% block body %}
 <ul class="taglist">
 {% for tag in tags %}
-{% if tag.1 %}<li><a href="/tag/{{ tag.0 }}/">{{ tag.0 }}</a>: {{ tag.1 }}</li>{% endif %}
+{% if tag.1 %}<li><a href="/tags/{{ tag.0 }}/">{{ tag.0 }}</a>: {{ tag.1 }}</li>{% endif %}
 {% endfor %}
 </ul>
 {% endblock %}

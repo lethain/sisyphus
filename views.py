@@ -73,7 +73,7 @@ def tags_module(offset=0, limit=10, cli=None):
     "Create module for tags."
     tags = sisyphus.models.tags(offset, limit, cli=cli)
     html = ['<ul class="tags">'] + \
-        [ '<li><a href="/tag/%s/">%s</a> (%s)</li>' % (x,x,y) for x,y in tags ] + \
+        [ '<li><a href="/tags/%s/">%s</a> (%s)</li>' % (x,x,y) for x,y in tags ] + \
         ['<li><a href="/tags/">More&hellip;</a></li>', '</ul>']
     return { 'title': 'Tags', 'html':'\n'.join(html) }
 
@@ -145,7 +145,7 @@ def tag_list(request, slug):
     "Retrieve stories within a tag."
     cli = sisyphus.models.redis_client()
     key = sisyphus.models.TAG_PAGES_ZSET_BY_TREND % slug
-    return render_list(request, key, "/tag/%s/" % slug, cli=cli)
+    return render_list(request, key, "/tags/%s/" % slug, cli=cli)
 
 def similar_list(request, slug, cli=None):
     "List of stories similar to this one."
