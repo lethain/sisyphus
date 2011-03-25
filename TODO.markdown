@@ -1,4 +1,7 @@
-
+* analytics
+  * implement analytics module
+  * implement analytics
+  * top referrers for each article
 * we have ``python ../local-sisyphus/blog/manage.py  update_page ../blog/example.html``
     for deploying stories, but need the ecosystem for generating the clean HTML I want...
 * articles to write backwards compat
@@ -15,18 +18,19 @@
     * similar content
     * more wiki-like
     * analytics
+* cross-browser compat
+    * test on firefox 2.0 and newer
+    * get some screenshots on IE versions
 * deploy
     * add TWITTER_USERNAME to settings on dev.lethain.com
     * change DOMAIN to lethain.com
+* import comments from irrational exuberance v2.0
+
 
 V2:
 
+
 * add mobile CSS
-* import comments from irrational exuberance v2.0
-* analytics
-  * implement analytics module
-  * implement analytics
-  * top referrers for each article
 * add module pagination via ajax
 
 V100:
