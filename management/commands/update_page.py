@@ -5,7 +5,11 @@ import time
 
 class Command(BaseCommand):
     args = "<file_to_load file_to_load ...>"
-    help = "Load or update pages."
+    help = "Load or update Sisyphus pages."
+
+    def _override_page(self, page):
+        "Override in subclasses for easy extension."
+        return page
     
     def handle(self, *args, **options):
         for file in args:
@@ -17,7 +21,7 @@ class Command(BaseCommand):
                     if not ended and len(line.strip()) == 0:
                         ended = True
                     elif ended:
-                        html.append(line.strip())
+                        html.append(line.rstrip())
                     else:
                         meta.append(line)
                 meta.append("}")
@@ -28,6 +32,6 @@ class Command(BaseCommand):
                     page['tags'] = []
 
                 page['html'] = u"\n".join(html)
-                sisyphus.models.add_page(page)
+                sisyphus.models.add_page(self._override_page(page))
 
 

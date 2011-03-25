@@ -45,7 +45,7 @@ PAGEVIEW_BONUS = 60 * 60 * 24
 PAGE_SCHEMA = whoosh.fields.Schema(title=whoosh.fields.TEXT(),
                                    summary=whoosh.fields.TEXT(),
                                    content=whoosh.fields.TEXT(),
-                                   slug=whoosh.fields.ID(stored=True),
+                                   slug=whoosh.fields.ID(unique=True, stored=True),
                                    )
 
 def track(page, cli=None):
@@ -96,6 +96,8 @@ def add_page(page, cli=None):
     "Create a page."
     cli = cli or redis_client()
     slug = page['slug']
+    new_page = not cli.exists(PAGE_STRING % slug)
+
     cli.set(PAGE_STRING % slug, json.dumps(page))
     cli.zadd(PAGE_ZSET_BY_TIME, slug, page['pub_date'])
     cli.zadd(PAGE_ZSET_BY_TREND, slug, page['pub_date'])

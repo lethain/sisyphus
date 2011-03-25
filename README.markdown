@@ -1,5 +1,7 @@
 # Installation
 
+    pip install whoosh python-markdown redis
+
 * start redis...
 * create a whoosh directory and a reference to it in ``settings.py``
 
