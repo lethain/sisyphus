@@ -9,6 +9,17 @@
 * fix titles 
 * add facebook metadata
 * add social sharing
+* 500 and 404 pages
+* deploy
+    * turn off debug
+* write article on blog explaining stuff
+    * trending
+    * nginx rewrites for url backwards compatibility
+    * search
+    * tags
+    * similar content
+    * more wiki-like
+    * analytics
 
 V2:
 
