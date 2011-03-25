@@ -1,11 +1,4 @@
 from django.conf.urls.defaults import *
-from sisyphus.feeds import RecentPagesFeed
-
-"""
-/feeds/tag/python/
-/feeds/all/
-/feeds/flow/life/
-"""
 
 urlpatterns = patterns('',
     (r'^search/$', 'sisyphus.views.search'),
