@@ -21,11 +21,17 @@ class Command(BaseCommand):
                     if not ended and len(line.strip()) == 0:
                         ended = True
                     elif ended:
-                        html.append(line.rstrip())
+                        html.append(line.rstrip().decode('utf-8'))
                     else:
-                        meta.append(line)
+                        meta.append(line.rstrip())
+                meta[-1] = meta[-1].rstrip(',')
                 meta.append("}")
-                page = json.loads(u"\n".join(meta))
+                try:
+                    page = json.loads(u"\n".join(meta))
+                except Exception, e:
+                    print meta
+                    raise
+
                 if 'pub_date' not in page:
                     page['pub_date'] = int(time.time())
                 if 'tags' not in page:
