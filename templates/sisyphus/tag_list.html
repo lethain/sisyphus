@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}Tags on {{ block.super }}{% endblock %}
 {% block body %}
 <ul class="taglist">
 {% for tag in tags %}

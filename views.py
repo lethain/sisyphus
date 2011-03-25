@@ -66,7 +66,7 @@ def tags_list(request):
     cli = sisyphus.models.redis_client()
     context = {'tags': sisyphus.models.tags(limit=1000, cli=cli),
                'modules': default_modules(None, limit=5, cli=cli)
-               }    
+               }
     return render_to_response('sisyphus/tag_list.html', context, context_instance=RequestContext(request))
 
 def tags_module(offset=0, limit=10, cli=None):
@@ -101,7 +101,7 @@ def similar_pages_module(page, limit=3, cli=None):
         return {'title': 'Similar', 'pages':pages, 'more_link':'/similar/%s/' % page['slug']}
     else:
         return None
-    
+
 def default_modules(page, extras=[], limit=3, cli=None):
     ""
     modules = [(0.75, about_module(cli=cli)),
@@ -113,7 +113,7 @@ def default_modules(page, extras=[], limit=3, cli=None):
     active_modules.sort(reverse=True)
     return [ y for x,y in active_modules ]
 
-def render_list(request, key, base_url, cli=None):
+def render_list(request, key, base_url, title, cli=None):
     try:
         offset = int(request.GET.get('offset', 0))
     except ValueError:
@@ -137,28 +137,29 @@ def render_list(request, key, base_url, cli=None):
                'pager_prev': offset - per_page,
                'pager_remaining': offset + per_page < total_pages,
                'pager_pages': pages,
+               'html_title': title,
                'modules': default_modules(None, extra_modules, limit=5, cli=cli),
-               }    
+               }
     return render_to_response('sisyphus/page_list.html', context, context_instance=RequestContext(request))
 
 def tag_list(request, slug):
     "Retrieve stories within a tag."
     cli = sisyphus.models.redis_client()
     key = sisyphus.models.TAG_PAGES_ZSET_BY_TREND % slug
-    return render_list(request, key, "/tags/%s/" % slug, cli=cli)
+    return render_list(request, key, "/tags/%s/" % slug, slug, cli=cli)
 
 def similar_list(request, slug, cli=None):
     "List of stories similar to this one."
     cli = sisyphus.models.redis_client()
     page = sisyphus.models.get_page(slug, cli=cli)
     key = sisyphus.models.ensure_similar_pages_key(page, cli=cli)
-    return render_list(request, key, "/similar/%s/" % slug, cli=cli)
+    return render_list(request, key, "/similar/%s/" % slug, "Similar to %s" % page['title'], cli=cli)
 
 def story_list(request, list_type, cli=None):
     "Create a storylist page."
     if list_type in STORY_LIST_KEYS:
         key = STORY_LIST_KEYS[list_type]
-        return render_list(request, key, "/list/%s/" % list_type, cli=cli)        
+        return render_list(request, key, "/list/%s/" % list_type, list_type, cli=cli)
     else:
         raise Http404
 
