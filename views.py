@@ -167,8 +167,8 @@ def page(request, slug):
     "Render a page."
     cli = sisyphus.models.redis_client()
     object = sisyphus.models.get_page(slug, cli=cli)
-    sisyphus.models.track(object, cli=cli)
     if object:
+        sisyphus.models.track(object, cli=cli)
         object = sisyphus.models.convert_pub_date_to_datetime(object)
         extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
                          (0.1, analytics_module(cli=cli)),

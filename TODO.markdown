@@ -1,6 +1,8 @@
-* backwards compat
-  * add media migration for old stuff
-  * add 302s for existing lifeflow stuff
+* articles to write backwards compat
+  * /articles/
+  * /coding-projects/
+  * /will-larson/
+
 * deploy that shit
 * we have ``python ../local-sisyphus/blog/manage.py  update_page ../blog/example.html``
     for deploying stories, but need the ecosystem for generating the clean HTML I want...
