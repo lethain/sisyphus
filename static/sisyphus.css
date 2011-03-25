@@ -24,7 +24,6 @@ h1, h2, h3, h4, h5, #hd {
     padding: 10px 5px 5px 10px;
 }
 
-
 /*
  * Header CSS
  */
@@ -153,6 +152,14 @@ h1, h2, h3, h4, h5, #hd {
     color: #777;
     font-size: 90%;
 }
+#body .page .date {
+    padding-right: 20px;
+}
+
+#body .page .social {
+    margin: 10px 20px;
+}
+
 
 #body .summary, #body .page .text p, #body .page pre, #body .page li {
     margin: 10px 10px 10px 20px;
@@ -175,6 +182,10 @@ h1, h2, h3, h4, h5, #hd {
     margin-right: 15px;
     font-size: 90%;
 }
+#body .page .tag {
+    margin-left: 20px;
+}
+
 
 #body .pagination.bottom {
       border-top: 1px solid #AAA;
