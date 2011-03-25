@@ -58,6 +58,7 @@ def track(page, cli=None):
 def search(raw_query, cli=None):
     whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
     pages = []
+    searcher = None
     try:
         searcher = whoosh_index.searcher()
         query = whoosh.qparser.QueryParser('content', PAGE_SCHEMA).parse(raw_query)
@@ -67,7 +68,8 @@ def search(raw_query, cli=None):
             cli = cli or redis_client()
             pages = [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in slugs]) ]
     finally:
-        searcher.close()
+        if searcher is not None:
+            searcher.close()
     return pages
     
 
