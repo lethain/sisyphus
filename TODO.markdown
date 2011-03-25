@@ -1,11 +1,11 @@
 
-* 500 and 404 pages
 * we have ``python ../local-sisyphus/blog/manage.py  update_page ../blog/example.html``
     for deploying stories, but need the ecosystem for generating the clean HTML I want...
 * articles to write backwards compat
   * /articles/
   * /coding-projects/
   * /will-larson/
+* django-compress for static media (far-future expires or death)
 * write article on blog explaining stuff
     * v3
     * trending
@@ -16,7 +16,6 @@
     * more wiki-like
     * analytics
 * deploy
-    * turn off debug
     * add TWITTER_USERNAME to settings on dev.lethain.com
     * change DOMAIN to lethain.com
 
