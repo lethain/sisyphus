@@ -38,7 +38,7 @@ PAGE_ZSET_BY_TIME = "pages_by_time"
 PAGE_ZSET_BY_TREND = "pages_by_trend"
 PAGE_STRING = "page.%s"
 SIMILAR_PAGES_BY_TREND = "similar_pages.%s"
-SIMILAR_PAGES_EXPIRE = 60 * 60
+SIMILAR_PAGES_EXPIRE = 60 * 5
 
 PAGEVIEW_BONUS = 60 * 60 * 24
 
@@ -158,7 +158,7 @@ def get_pages(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None)
         return []
 
 def get_nearby_pages(page, limit=3, cli=None):
-    ""
+    "Retrieve preceeding and following articles."
     slug = page['slug']
     pub_date = page['pub_date']
     cli = cli or redis_client()
@@ -173,19 +173,19 @@ def get_nearby_pages(page, limit=3, cli=None):
     else:
         return []
 
-    
-
 def ensure_similar_pages_key(page, cli=None):
     "Make sure the data exists."
     cli = cli or redis_client()
-    tag_keys = [ TAG_PAGES_ZSET_BY_TREND % x for x in page.get('tags',[])]
-    if tag_keys:
-        sim_key = SIMILAR_PAGES_BY_TREND % page['slug']
-        cli.zunionstore(sim_key, tag_keys)
-        cli.zrem(sim_key, page['slug'])
-        cli.expire(sim_key, SIMILAR_PAGES_EXPIRE)
-        return sim_key
-    return None
+    sim_key = SIMILAR_PAGES_BY_TREND % page['slug']
+    if not cli.exists(sim_key):
+        tag_keys = [ TAG_PAGES_ZSET_BY_TREND % x for x in page.get('tags',[])]
+        if tag_keys:
+            cli.zunionstore(sim_key, tag_keys)
+            cli.zrem(sim_key, page['slug'])
+            cli.expire(sim_key, SIMILAR_PAGES_EXPIRE)
+        else:
+            return None
+    return sim_key
 
 def similar_pages(page, offset=0, limit=3, withscores=False, cli=None):
     "Find top performing stories in similar tags."

@@ -57,7 +57,7 @@ def storylist_module(key, title, more_link=None, limit=3, cli=None, page=None):
 def trending_module(limit=3, page=None, cli=None):
     "Create default trending module."
     return storylist_module(sisyphus.models.PAGE_ZSET_BY_TREND,
-                            "Trending",
+                            "Popular",
                             "/list/trending/",
                             limit=limit,
                             page=page)
@@ -85,11 +85,16 @@ def recent_module(limit=3, page=None, cli=None):
                             limit=limit,
                             page=page)
 
-def context_module(page, limit=1, cli=None):
+def context_module(page, limit=2, cli=None):
     "Module contains stories surrounding."
     pages = sisyphus.models.get_nearby_pages(page, limit, cli=cli)
-    pages.reverse()
-    return {"title":"Nearby", "pages":pages}
+    before = None
+    after = None
+    if pages[:limit]:
+        before = {"title":"Previous", "pages":pages[:limit]}
+    if pages[limit+1:]:
+        after = {"title":"Next", "pages":pages[limit+1:]}
+    return (before, after)
 
 def similar_pages_module(page, limit=3, cli=None):
     """
@@ -173,9 +178,13 @@ def page(request, slug):
         extra_modules = []
         if object['published']:
             sisyphus.models.track(object, cli=cli)
+            before_mod, after_mod = context_module(object, cli=cli)
             extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
                              (0.1, analytics_module(cli=cli)),
-                             (0.71, context_module(object, cli=cli))]
+                             (0.71, before_mod),
+                             (0.72, after_mod),
+                             ]
+
         context = { 'page': object,
                     'domain': settings.DOMAIN,
                     'twitter_username': settings.TWITTER_USERNAME,
