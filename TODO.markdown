@@ -1,7 +1,4 @@
-
-* sitemap.xml
 * django-compress for static media (far-future expires or death)
-
 * fix trending
   * trending should be activity from last few hours or last day or osmething, not lifespan
   * the "by trend" score is still interesting for best of all time
@@ -20,6 +17,7 @@
     * v3
     * trending
     * nginx rewrites for url backwards compatibility
+    * social sharing
     * search
     * tags
     * similar content
@@ -27,6 +25,8 @@
     * analytics
 * deploy
     * change DOMAIN to lethain.com
+    * change DNS to point lethain.com to new VPS
+   
 * import comments from irrational exuberance v2.0
 
 
