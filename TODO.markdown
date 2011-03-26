@@ -10,9 +10,8 @@
   * top referrers for each article
 
 * articles to write backwards compat
-  * /articles/ reuse picture from current site
+  * /articles/
   * /coding-projects/
-  * /will-larson/ publish date should be my birthday in 1985
 
 * write article on blog explaining stuff
     * v3

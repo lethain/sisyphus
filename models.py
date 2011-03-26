@@ -193,9 +193,9 @@ def similar_pages(page, offset=0, limit=3, withscores=False, cli=None):
     sim_key = ensure_similar_pages_key(page, cli=cli)
     if sim_key:
         page_slugs = cli.zrevrange(sim_key, offset, offset+limit-1, withscores=withscores)
-        return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
-    else:
-        return []
+        if page_slugs:
+            return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
+    return []
 
 def tags(offset=0, limit=10, withscores=True, cli=None):
     cli = cli or redis_client()
