@@ -36,10 +36,9 @@ class Command(BaseCommand):
                              'tags': tags,
                              'pub_date': int(time.mktime(datetime.datetime.strptime(fields['pub_date'],"%Y-%m-%d %H:%M:%S").timetuple())),
                              'summary': fields['summary'].replace('\n',''),
-                             'html': fields['body_html'].replace('/media/lifeflow/', settings.SISYPHUS_BLOG_STATIC_URL),
+                             'html': fields['body_html'].replace('/media/lifeflow/resource/', settings.SISYPHUS_BLOG_STATIC_URL),
                              }
                     file_path = os.path.join(draft_dir, "%s.html" % (data['slug']))
-                    print file_path
                     with open(file_path, 'w') as fout:
                         for key,val in data.iteritems():
                             if key is not 'html':

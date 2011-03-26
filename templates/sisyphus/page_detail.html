@@ -2,17 +2,18 @@
 {% block title %}{{ page.title }}{% endblock %}
 {% block body %}
 <div class="page">
-  <h2><a href="/{{ page.slug }}">{{ page.title }}</a></h2>
-  <span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>
+  <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
+  {% if page.published %}<span class="date">{% if page.edit_date != page.pub_date %}<span class="edited">(edited {{ page.edit_date|date:"SHORT_DATE_FORMAT" }})</span>{% endif %}{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
   {% for tag in page.tags %}<span class="tag"><a href="/tags/{{ tag }}/">{{ tag }}</a></span>{% endfor %}
   <br class="clear">
-  {% include "sisyphus/social.html" %}
+   {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
    <div class="text">
   {{ page.html|safe }}
    </div>
-  {% include "sisyphus/social.html" %}
+   {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
 </div>
- 
+
+{% if page.published %} 
 <div id="disqus_thread"></div>
 <script type="text/javascript">
 var disqus_shortname = '{{ disqus_shortname }}';
@@ -27,5 +28,7 @@ var disqus_url = 'http://lethain.com/{{ page.slug }}/';
 })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+{% endif %}
+
 {% endblock %}
 

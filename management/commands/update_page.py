@@ -10,12 +10,13 @@ class Command(BaseCommand):
     def _override_page(self, page):
         "Override in subclasses for easy extension."
         return page
-    
-    def handle(self, *args, **options):
+
+    def handle(self, *args, **kwargs):
+        index = kwargs.get('index', True)
         for file in args:
             with open(file, 'r') as fin:
                 meta = ["{"]
-                html = []        
+                html = []
                 ended = False
                 for line in fin.readlines():
                     if not ended and len(line.strip()) == 0:
@@ -38,6 +39,6 @@ class Command(BaseCommand):
                     page['tags'] = []
 
                 page['html'] = u"\n".join(html)
-                sisyphus.models.add_page(self._override_page(page))
+                sisyphus.models.add_page(self._override_page(page), index=index)
 
 

@@ -1,4 +1,6 @@
-* script for aggregating media and loading stories
+
+* sitemap.xml
+* django-compress for static media (far-future expires or death)
 
 * fix trending
   * trending should be activity from last few hours or last day or osmething, not lifespan
@@ -11,12 +13,9 @@
   * implement analytics
   * top referrers for each article
 * articles to write backwards compat
-  * /articles/
+  * /articles/ 
   * /coding-projects/
-  * /will-larson/
-* django-compress for static media (far-future expires or death)
-* sitemap.xml
-* robots.txt
+  * /will-larson/ publish date should be my birthday in 1985
 * write article on blog explaining stuff
     * v3
     * trending
@@ -27,7 +26,6 @@
     * more wiki-like
     * analytics
 * deploy
-    * add TWITTER_USERNAME to settings on dev.lethain.com
     * change DOMAIN to lethain.com
 * import comments from irrational exuberance v2.0
 

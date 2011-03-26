@@ -1,6 +1,8 @@
 from django.conf.urls.defaults import *
+import sisyphus.sitemap
 
 urlpatterns = patterns('',
+    (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sisyphus.sitemap.SITEMAPS}),
     (r'^search/$', 'sisyphus.views.search'),
     (r'^feeds/(?P<feed_url>.*)$', 'sisyphus.views.feed'),
     (r'^tags/(?P<slug>[a-zA-Z0-9\-_]+)/$', 'sisyphus.views.tag_list'),

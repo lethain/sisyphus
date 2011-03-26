@@ -169,11 +169,13 @@ def page(request, slug):
     cli = sisyphus.models.redis_client()
     object = sisyphus.models.get_page(slug, cli=cli)
     if object:
-        sisyphus.models.track(object, cli=cli)
         object = sisyphus.models.convert_pub_date_to_datetime(object)
-        extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
-                         (0.1, analytics_module(cli=cli)),
-                         (0.71, context_module(object, cli=cli))]
+        extra_modules = []
+        if object['published']:
+            sisyphus.models.track(object, cli=cli)
+            extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
+                             (0.1, analytics_module(cli=cli)),
+                             (0.71, context_module(object, cli=cli))]
         context = { 'page': object,
                     'domain': settings.DOMAIN,
                     'twitter_username': settings.TWITTER_USERNAME,

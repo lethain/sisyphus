@@ -76,6 +76,12 @@ def search(raw_query, cli=None):
 def redis_client(host="localhost", port=6379, db=0):
     return redis.Redis(host, port, db=db)
 
+def get_page(page_slug, cli=None):
+    "Retrieve a page."
+    cli = cli or redis_client()
+    resp = cli.get(PAGE_STRING % page_slug)
+    return resp and json.loads(resp) or resp
+
 def add_tag(slug, created=None, cli=None):
     "Idempotently create a new tag."
     cli = cli or redis_client()
@@ -92,28 +98,47 @@ def add_page_to_tag(tag_slug, page_slug, created=None, cli=None):
         cli.zadd(TAG_PAGES_ZSET_BY_TREND % tag_slug, page_slug, created)
         cli.zincrby(TAG_ZSET_BY_PAGES, tag_slug, 1)
 
-def add_page(page, cli=None):
-    "Create a page."
+def add_page(page, index=True, cli=None):
+    """
+    Create a page.
+
+    Set index parameter to False if you want to load a page
+    but don't want to associate it with any of the existing storylists.
+    """
     cli = cli or redis_client()
     slug = page['slug']
-    new_page = not cli.exists(PAGE_STRING % slug)
+    old_page = get_page(slug)
+
+    if index and old_page and not old_page.get('published', False):
+        page['pub_date'] = int(time.time())
+
+    if old_page and old_page['html'] != page['html']:
+        page['edit_date'] = int(time.time())
+    elif old_page and 'edit_date' in old_page:
+        page['edit_date'] = old_page['edit_date']
+    else:
+        page['edit_date'] = page['pub_date']
+
+    page['published'] = False
+    if index:
+        page['published'] = True
+        cli.zadd(PAGE_ZSET_BY_TIME, slug, page['pub_date'])
+        cli.zadd(PAGE_ZSET_BY_TREND, slug, page['pub_date'])
+
+        for tag in page['tags']:
+            add_page_to_tag(tag, slug, created=page['pub_date'], cli=cli)
+
+        # add to search index
+        try:
+            whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
+        except Exception, e:
+            whoosh_index = whoosh.index.create_in(settings.WHOOSH_INDEXDIR, PAGE_SCHEMA)
+        writer = whoosh_index.writer()
+        to_index = {'title': page['title'], 'summary':page['summary'], 'content':page['html'], 'slug':page['slug']}
+        writer.update_document(**to_index)
+        writer.commit()
 
     cli.set(PAGE_STRING % slug, json.dumps(page))
-    cli.zadd(PAGE_ZSET_BY_TIME, slug, page['pub_date'])
-    cli.zadd(PAGE_ZSET_BY_TREND, slug, page['pub_date'])
-
-    for tag in page['tags']:
-        add_page_to_tag(tag, slug, created=page['pub_date'], cli=cli)
-
-    # add to search index
-    try:
-        whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
-    except Exception, e:
-        whoosh_index = whoosh.index.create_in(settings.WHOOSH_INDEXDIR, PAGE_SCHEMA)
-    writer = whoosh_index.writer()
-    to_index = {'title': page['title'], 'summary':page['summary'], 'content':page['html'], 'slug':page['slug']}
-    writer.add_document(**to_index)
-    writer.commit()
 
 def get_page_slugs(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None, withscores=False):
     "Retrieve pages from global zsets."
@@ -182,16 +207,11 @@ def tags(offset=0, limit=10, withscores=True, cli=None):
 def convert_pub_date_to_datetime(page):
     "Replace timestamps with datetimes."
     page['pub_date'] = datetime.datetime.fromtimestamp(page['pub_date'])
+    page['edit_date'] = datetime.datetime.fromtimestamp(page['edit_date'])
     return page
 
 def num_pages(key=PAGE_ZSET_BY_TIME, cli=None):
     "Return cardinality for key."
     cli = cli or redis_client()
     return cli.zcard(key)
-
-def get_page(page_slug, cli=None):
-    "Retrieve a page."
-    cli = cli or redis_client()
-    resp = cli.get(PAGE_STRING % page_slug)
-    return resp and json.loads(resp) or resp
 

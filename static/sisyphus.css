@@ -156,6 +156,11 @@ h1, h2, h3, h4, h5, #hd {
     padding-right: 20px;
 }
 
+#body .page .date .edited {
+     margin-right: 5px;
+     color: #555;
+}
+
 #body .page .social {
     margin: 10px 20px;
 }
