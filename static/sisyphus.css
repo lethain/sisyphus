@@ -4,7 +4,7 @@ body, html {
     background: #505070;
 }
 
-h1, h2, h3, h4, h5, #hd {
+h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     font-family: Georgia, Serif;
 }
 
@@ -42,7 +42,7 @@ h1, h2, h3, h4, h5, #hd {
      color:#fff;
      background:#999;
      text-decoration:none;
-     text-shadow:1px 1px 1px rgba(0,0,0,0.75); /* Text shadow to lift it a little */
+     text-shadow:1px 1px 1px rgba(70,70,70,0.75); /* Text shadow to lift it a little */
      -moz-border-radius:5px;
      -webkit-border-radius:5px;
      border-radius:5px;
@@ -68,6 +68,7 @@ h1, h2, h3, h4, h5, #hd {
     color:#fff;
     background:#999;
     border:#6b0c36;
+    text-shadow:1px 1px 1px rgba(70,70,70,0.75);
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
     border-radius:5px;
