@@ -1,16 +1,15 @@
-* fix trending
+* shouldn't show "more" link in modules if there are infact, not more stories (e.g. len is less than expected)
+* analytics/trending
   * trending should be activity from last few hours or last day or osmething, not lifespan
   * the "by trend" score is still interesting for best of all time
   * store each page's hourly referrers and merge them together periodically
   * initially have text links in module (don't want to serve much JavaScript on normal page load)
   * have a per-post analysis page linked from module
-* analytics
   * implement analytics module
   * implement analytics
   * top referrers for each article
 * articles to write backwards compat
   * /coding-projects/
-
 * write article on blog explaining stuff
     * v3
     * trending
@@ -23,7 +22,6 @@
     * analytics
 * deploy
     * change DNS to point lethain.com to new VPS
-   
 * import comments from irrational exuberance v2.0, only those more than 2 months old...
 
 
