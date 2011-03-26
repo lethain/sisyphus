@@ -9,7 +9,6 @@
   * implement analytics
   * top referrers for each article
 * articles to write backwards compat
-  * articles.md still needs it URLs to be rewritten to new format (bah)
   * /coding-projects/
 
 * write article on blog explaining stuff
