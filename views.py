@@ -91,7 +91,7 @@ def context_module(page, limit=2, cli=None):
     before = None
     after = None
     if pages[:limit]:
-        before = {"title":"Previous", "pages":pages[:limit]}
+        before = {"title":"Previous", "pages":reversed(pages[:limit])}
     if pages[limit+1:]:
         after = {"title":"Next", "pages":pages[limit+1:]}
     return (before, after)
