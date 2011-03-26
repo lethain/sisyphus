@@ -1,4 +1,3 @@
-* django-compress for static media (far-future expires or death)
 * fix trending
   * trending should be activity from last few hours or last day or osmething, not lifespan
   * the "by trend" score is still interesting for best of all time
@@ -9,10 +8,12 @@
   * implement analytics module
   * implement analytics
   * top referrers for each article
+
 * articles to write backwards compat
-  * /articles/ 
+  * /articles/ reuse picture from current site
   * /coding-projects/
   * /will-larson/ publish date should be my birthday in 1985
+
 * write article on blog explaining stuff
     * v3
     * trending
@@ -24,17 +25,16 @@
     * more wiki-like
     * analytics
 * deploy
-    * change DOMAIN to lethain.com
     * change DNS to point lethain.com to new VPS
    
-* import comments from irrational exuberance v2.0
+* import comments from irrational exuberance v2.0, only those more than 2 months old...
 
 
 V2:
 
-
+* use tidycss along with django-compress
 * add mobile CSS
-* add module pagination via ajax
 
 V100:
+* add module pagination via ajax
 * add facebook metadata (this is a pain, and I need images, and my facebook userid)
