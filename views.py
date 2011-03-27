@@ -103,7 +103,8 @@ def similar_pages_module(page, limit=3, cli=None):
     """
     pages = sisyphus.models.similar_pages(page, limit=limit, cli=cli)
     if pages:
-        return {'title': 'Similar', 'pages':pages, 'more_link':'/similar/%s/' % page['slug']}
+        more_link = '/similar/%s/' % page['slug'] if len(pages) >= limit else None
+        return {'title': 'Similar', 'pages':pages, 'more_link':more_link}
     else:
         return None
 

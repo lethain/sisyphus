@@ -1,4 +1,25 @@
-* shouldn't show "more" link in modules if there are infact, not more stories (e.g. len is less than expected)
+* analytics
+  * product
+    * site overview
+      * lifetime refers
+      * lifetime traffic per post
+      * recent traffic per post
+    * page analytics
+      * lifetime traffic per referrer
+      * recent traffic per referrer
+      * traffic per hour for last 24 hours
+      * 
+    * analytics module
+      * top 3 referers for this post
+      * link to see all analytics data
+  * implementation
+    * refer.SLUG - zset with refer domain as slug
+    * refer.MONTH - monthly zset with refer domain as slug
+    * 
+  * notes
+    * nofollow links on the refers
+
+
 * analytics/trending
   * trending should be activity from last few hours or last day or osmething, not lifespan
   * the "by trend" score is still interesting for best of all time
