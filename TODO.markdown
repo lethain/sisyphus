@@ -1,34 +1,3 @@
-* analytics
-  * product
-    * site overview
-      * lifetime refers
-      * lifetime traffic per post
-      * recent traffic per post
-    * page analytics
-      * lifetime traffic per referrer
-      * recent traffic per referrer
-      * traffic per hour for last 24 hours
-      * 
-    * analytics module
-      * top 3 referers for this post
-      * link to see all analytics data
-  * implementation
-    * refer.SLUG - zset with refer domain as slug
-    * refer.MONTH - monthly zset with refer domain as slug
-    * 
-  * notes
-    * nofollow links on the refers
-
-
-* analytics/trending
-  * trending should be activity from last few hours or last day or osmething, not lifespan
-  * the "by trend" score is still interesting for best of all time
-  * store each page's hourly referrers and merge them together periodically
-  * initially have text links in module (don't want to serve much JavaScript on normal page load)
-  * have a per-post analysis page linked from module
-  * implement analytics module
-  * implement analytics
-  * top referrers for each article
 * articles to write backwards compat
   * /coding-projects/
 * write article on blog explaining stuff
@@ -45,9 +14,25 @@
     * change DNS to point lethain.com to new VPS
 * import comments from irrational exuberance v2.0, only those more than 2 months old...
 
-
 V2:
 
+* analytics
+  * product
+    * site overview
+      * lifetime refers
+      * lifetime traffic per post
+      * recent traffic per post
+    * page analytics
+      * lifetime traffic per referrer
+      * recent traffic per referrer
+      * traffic per hour for last 24 hours
+    * analytics module
+      * top 3 referers for this post
+      * link to see all analytics data
+  * notes
+    * nofollow links on the refers
+    * import as much apache log data as possible from existing site
+    * use flot to enhance the analytics tables which will initially just be tables...
 * use tidycss along with django-compress
 * add mobile CSS
 

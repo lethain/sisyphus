@@ -178,7 +178,7 @@ def page(request, slug):
         object = sisyphus.models.convert_pub_date_to_datetime(object)
         extra_modules = []
         if object['published']:
-            sisyphus.models.track(object, cli=cli)
+            sisyphus.models.track(request, object, cli=cli)
             before_mod, after_mod = context_module(object, cli=cli)
             extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
                              (0.1, analytics_module(cli=cli)),
