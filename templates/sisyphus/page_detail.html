@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% block canonnical %}<link rel="canonical" href="http://{{ domain }}/{{ page.slug }}/">{% endblock %}
+
 {% block title %}{{ page.title }}{% endblock %}
 {% block body %}
 <div class="page">
