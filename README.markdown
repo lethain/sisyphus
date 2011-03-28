@@ -1,3 +1,11 @@
+# NOT READY FOR PUBLIC CONSUMPTION.
+
+You'll seriously hate my guts if you try to use this right now.
+It just isn't ready. Please have sub-zero expectations if you
+try getting started with Sisyphus at this point.
+
+
+
 # Installation
 
     pip install whoosh python-markdown redis
