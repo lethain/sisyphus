@@ -1,5 +1,3 @@
-* articles to write backwards compat
-  * /coding-projects/
 * write article on blog explaining stuff
     * v3
     * trending
@@ -10,6 +8,7 @@
     * similar content
     * more wiki-like
     * analytics
+* always let users know what storylist they are looking at
 * deploy
     * change DNS to point lethain.com to new VPS
 * import comments from irrational exuberance v2.0, only those more than 2 months old...

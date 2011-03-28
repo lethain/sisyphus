@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
     border-radius:5px;
-    background: #FFF;
+    background: #EEE;
     padding: 5px;
 }
 #body {
@@ -171,7 +171,7 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     margin: 10px 10px 10px 20px;
 }
 #body .summary, #body .page .text p {
-    width: 400px;
+    width: 500px;
 }
 
 #body table {
@@ -217,6 +217,18 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     margin: 10px 10px 10px 30px;
     list-style: decimal;
 }
+
+#body .page .text .toc {
+    border: 1px solid #999;
+    background: #FFF;
+    margin: 10px 50px 10px 50px;
+    font-size: 90%;
+}
+
+#body .page .text .toc ul {
+    line-height: 90%;
+}
+
 
 #body .page .text li {
     margin-bottom: 5px;

@@ -9,5 +9,5 @@ class Command(sisyphus.management.commands.update_page.Command):
 
     def _override_page(self, page):
         "Override in subclasses for easy extension."
-        page['html'] = markdown.markdown(page['html'], ['codehilite(css_class=highlight)'])
+        page['html'] = markdown.markdown(page['html'], ['codehilite(css_class=highlight)', 'headerid','toc'])
         return page
