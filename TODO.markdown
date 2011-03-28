@@ -22,9 +22,12 @@ V2:
     * nofollow links on the refers
     * import as much apache log data as possible from existing site
     * use flot to enhance the analytics tables which will initially just be tables...
-* use tidycss along with django-compress
-* add mobile CSS
+
+V3:
+
+* documentation
 
 V100:
+* add mobile CSS
 * add module pagination via ajax
 * add facebook metadata (this is a pain, and I need images, and my facebook userid)
