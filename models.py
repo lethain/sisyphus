@@ -21,7 +21,8 @@ from django.conf import settings
 import redis
 import time
 import datetime
-import whoosh.index 
+import urlparse
+import whoosh.index
 import whoosh.fields
 import whoosh.qparser
 try:
@@ -38,19 +39,55 @@ PAGE_ZSET_BY_TIME = "pages_by_time"
 PAGE_ZSET_BY_TREND = "pages_by_trend"
 PAGE_STRING = "page.%s"
 SIMILAR_PAGES_BY_TREND = "similar_pages.%s"
-SIMILAR_PAGES_EXPIRE = 60 * 60
+SIMILAR_PAGES_EXPIRE = 60 * 5
 
 PAGEVIEW_BONUS = 60 * 60 * 24
 
 PAGE_SCHEMA = whoosh.fields.Schema(title=whoosh.fields.TEXT(),
                                    summary=whoosh.fields.TEXT(),
                                    content=whoosh.fields.TEXT(),
-                                   slug=whoosh.fields.ID(stored=True),
+                                   slug=whoosh.fields.ID(unique=True, stored=True),
                                    )
 
-def track(page, cli=None):
-    ""
+ANALYTICS_REFER = "analytics.refer"
+ANALYTICS_REFER_PAGE = "analytics.refer.%s"
+ANALYTICS_PAGEVIEW = "analytics.pv"
+ANALYTICS_PAGEVIEW_QTY = "analytics.pv_qty.%s"
+ANALYTICS_PAGEVIEW_BUCKET = "analytics.pv_bucket.%s"
+
+def standardize_refer(request):
+    url = request.META.get('HTTP_REFERER', '')
+    parts = urlparse.urlparse(url)
+    print parts
+    return parts.netloc
+
+def timebucket(period=3600):
+    "Return current time bucket."
+    return int(time.time()) / period
+
+def track(request, page, cli=None):
+    "Log pageview into analytics."
     slug = page['slug']
+
+    # TODO: implement analytics stuff, currently pushing it
+    #       to post launch
+    """
+    ref = standardize_refer(request)
+
+    # update referer analytics
+    cli.zincrby(ANALYTICS_REFER, ref, 1)
+    cli.zincrby(ANALYTICS_REFER_PAGE % slug, ref, 1)
+
+    # update all-time pageview analytics
+    cli.zincrby(ANALYTICS_PAGEVIEW, slug, 1)
+    
+    # update pageview analytics for last N hours
+    ANALYTICS_PAGEVIEW_QTY = "analytics.pv_qty.%s"
+    ANALYTICS_PAGEVIEW_BUCKET = "analytics.pv_bucket.%s"
+    #cli.zincrby(ANALYTICS_PAGEVIEW_BUCKET % slug, timebucket(), 1)
+    """
+
+    # update trending data
     cli.zincrby(PAGE_ZSET_BY_TREND, slug, PAGEVIEW_BONUS)
     for tag_slug in page['tags']:
         cli.zincrby(TAG_PAGES_ZSET_BY_TREND % tag_slug, slug, PAGEVIEW_BONUS)
@@ -58,6 +95,7 @@ def track(page, cli=None):
 def search(raw_query, cli=None):
     whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
     pages = []
+    searcher = None
     try:
         searcher = whoosh_index.searcher()
         query = whoosh.qparser.QueryParser('content', PAGE_SCHEMA).parse(raw_query)
@@ -67,12 +105,19 @@ def search(raw_query, cli=None):
             cli = cli or redis_client()
             pages = [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in slugs]) ]
     finally:
-        searcher.close()
+        if searcher is not None:
+            searcher.close()
     return pages
-    
+
 
 def redis_client(host="localhost", port=6379, db=0):
     return redis.Redis(host, port, db=db)
+
+def get_page(page_slug, cli=None):
+    "Retrieve a page."
+    cli = cli or redis_client()
+    resp = cli.get(PAGE_STRING % page_slug)
+    return resp and json.loads(resp) or resp
 
 def add_tag(slug, created=None, cli=None):
     "Idempotently create a new tag."
@@ -90,26 +135,47 @@ def add_page_to_tag(tag_slug, page_slug, created=None, cli=None):
         cli.zadd(TAG_PAGES_ZSET_BY_TREND % tag_slug, page_slug, created)
         cli.zincrby(TAG_ZSET_BY_PAGES, tag_slug, 1)
 
-def add_page(page, cli=None):
-    "Create a page."
+def add_page(page, index=True, cli=None):
+    """
+    Create a page.
+
+    Set index parameter to False if you want to load a page
+    but don't want to associate it with any of the existing storylists.
+    """
     cli = cli or redis_client()
     slug = page['slug']
+    old_page = get_page(slug)
+
+    if index and old_page and not old_page.get('published', False):
+        page['pub_date'] = int(time.time())
+
+    if old_page and old_page['html'] != page['html']:
+        page['edit_date'] = int(time.time())
+    elif old_page and 'edit_date' in old_page:
+        page['edit_date'] = old_page['edit_date']
+    else:
+        page['edit_date'] = page['pub_date']
+
+    page['published'] = False
+    if index:
+        page['published'] = True
+        cli.zadd(PAGE_ZSET_BY_TIME, slug, page['pub_date'])
+        cli.zadd(PAGE_ZSET_BY_TREND, slug, page['pub_date'])
+
+        for tag in page['tags']:
+            add_page_to_tag(tag, slug, created=page['pub_date'], cli=cli)
+
+        # add to search index
+        try:
+            whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
+        except Exception, e:
+            whoosh_index = whoosh.index.create_in(settings.WHOOSH_INDEXDIR, PAGE_SCHEMA)
+        writer = whoosh_index.writer()
+        to_index = {'title': page['title'], 'summary':page['summary'], 'content':page['html'], 'slug':page['slug']}
+        writer.update_document(**to_index)
+        writer.commit()
+
     cli.set(PAGE_STRING % slug, json.dumps(page))
-    cli.zadd(PAGE_ZSET_BY_TIME, slug, page['pub_date'])
-    cli.zadd(PAGE_ZSET_BY_TREND, slug, page['pub_date'])
-
-    for tag in page['tags']:
-        add_page_to_tag(tag, slug, created=page['pub_date'], cli=cli)
-
-    # add to search index
-    try:
-        whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
-    except Exception, e:
-        whoosh_index = whoosh.index.create_in(settings.WHOOSH_INDEXDIR, PAGE_SCHEMA)
-    writer = whoosh_index.writer()
-    to_index = {'title': page['title'], 'summary':page['summary'], 'content':page['html'], 'slug':page['slug']}
-    writer.add_document(**to_index)
-    writer.commit()
 
 def get_page_slugs(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None, withscores=False):
     "Retrieve pages from global zsets."
@@ -129,7 +195,7 @@ def get_pages(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None)
         return []
 
 def get_nearby_pages(page, limit=3, cli=None):
-    ""
+    "Retrieve preceeding and following articles."
     slug = page['slug']
     pub_date = page['pub_date']
     cli = cli or redis_client()
@@ -144,19 +210,19 @@ def get_nearby_pages(page, limit=3, cli=None):
     else:
         return []
 
-    
-
 def ensure_similar_pages_key(page, cli=None):
     "Make sure the data exists."
     cli = cli or redis_client()
-    tag_keys = [ TAG_PAGES_ZSET_BY_TREND % x for x in page.get('tags',[])]
-    if tag_keys:
-        sim_key = SIMILAR_PAGES_BY_TREND % page['slug']
-        cli.zunionstore(sim_key, tag_keys)
-        cli.zrem(sim_key, page['slug'])
-        cli.expire(sim_key, SIMILAR_PAGES_EXPIRE)
-        return sim_key
-    return None
+    sim_key = SIMILAR_PAGES_BY_TREND % page['slug']
+    if not cli.exists(sim_key):
+        tag_keys = [ TAG_PAGES_ZSET_BY_TREND % x for x in page.get('tags',[])]
+        if tag_keys:
+            cli.zunionstore(sim_key, tag_keys)
+            cli.zrem(sim_key, page['slug'])
+            cli.expire(sim_key, SIMILAR_PAGES_EXPIRE)
+        else:
+            return None
+    return sim_key
 
 def similar_pages(page, offset=0, limit=3, withscores=False, cli=None):
     "Find top performing stories in similar tags."
@@ -164,9 +230,9 @@ def similar_pages(page, offset=0, limit=3, withscores=False, cli=None):
     sim_key = ensure_similar_pages_key(page, cli=cli)
     if sim_key:
         page_slugs = cli.zrevrange(sim_key, offset, offset+limit-1, withscores=withscores)
-        return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
-    else:
-        return []
+        if page_slugs:
+            return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
+    return []
 
 def tags(offset=0, limit=10, withscores=True, cli=None):
     cli = cli or redis_client()
@@ -178,16 +244,11 @@ def tags(offset=0, limit=10, withscores=True, cli=None):
 def convert_pub_date_to_datetime(page):
     "Replace timestamps with datetimes."
     page['pub_date'] = datetime.datetime.fromtimestamp(page['pub_date'])
+    page['edit_date'] = datetime.datetime.fromtimestamp(page['edit_date'])
     return page
 
 def num_pages(key=PAGE_ZSET_BY_TIME, cli=None):
     "Return cardinality for key."
     cli = cli or redis_client()
     return cli.zcard(key)
-
-def get_page(page_slug, cli=None):
-    "Retrieve a page."
-    cli = cli or redis_client()
-    resp = cli.get(PAGE_STRING % page_slug)
-    return resp and json.loads(resp) or resp
 

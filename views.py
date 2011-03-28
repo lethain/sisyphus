@@ -57,7 +57,7 @@ def storylist_module(key, title, more_link=None, limit=3, cli=None, page=None):
 def trending_module(limit=3, page=None, cli=None):
     "Create default trending module."
     return storylist_module(sisyphus.models.PAGE_ZSET_BY_TREND,
-                            "Trending",
+                            "Popular",
                             "/list/trending/",
                             limit=limit,
                             page=page)
@@ -66,14 +66,14 @@ def tags_list(request):
     cli = sisyphus.models.redis_client()
     context = {'tags': sisyphus.models.tags(limit=1000, cli=cli),
                'modules': default_modules(None, limit=5, cli=cli)
-               }    
+               }
     return render_to_response('sisyphus/tag_list.html', context, context_instance=RequestContext(request))
 
 def tags_module(offset=0, limit=10, cli=None):
     "Create module for tags."
     tags = sisyphus.models.tags(offset, limit, cli=cli)
     html = ['<ul class="tags">'] + \
-        [ '<li><a href="/tag/%s/">%s</a> (%s)</li>' % (x,x,y) for x,y in tags ] + \
+        [ '<li><a href="/tags/%s/">%s</a> (%s)</li>' % (x,x,y) for x,y in tags ] + \
         ['<li><a href="/tags/">More&hellip;</a></li>', '</ul>']
     return { 'title': 'Tags', 'html':'\n'.join(html) }
 
@@ -85,11 +85,16 @@ def recent_module(limit=3, page=None, cli=None):
                             limit=limit,
                             page=page)
 
-def context_module(page, limit=1, cli=None):
+def context_module(page, limit=2, cli=None):
     "Module contains stories surrounding."
     pages = sisyphus.models.get_nearby_pages(page, limit, cli=cli)
-    pages.reverse()
-    return {"title":"Nearby", "pages":pages}
+    before = None
+    after = None
+    if pages[:limit]:
+        before = {"title":"Previous", "pages":reversed(pages[:limit])}
+    if pages[limit+1:]:
+        after = {"title":"Next", "pages":pages[limit+1:]}
+    return (before, after)
 
 def similar_pages_module(page, limit=3, cli=None):
     """
@@ -98,10 +103,11 @@ def similar_pages_module(page, limit=3, cli=None):
     """
     pages = sisyphus.models.similar_pages(page, limit=limit, cli=cli)
     if pages:
-        return {'title': 'Similar', 'pages':pages, 'more_link':'/similar/%s/' % page['slug']}
+        more_link = '/similar/%s/' % page['slug'] if len(pages) >= limit else None
+        return {'title': 'Similar', 'pages':pages, 'more_link':more_link}
     else:
         return None
-    
+
 def default_modules(page, extras=[], limit=3, cli=None):
     ""
     modules = [(0.75, about_module(cli=cli)),
@@ -113,7 +119,7 @@ def default_modules(page, extras=[], limit=3, cli=None):
     active_modules.sort(reverse=True)
     return [ y for x,y in active_modules ]
 
-def render_list(request, key, base_url, cli=None):
+def render_list(request, key, base_url, title, cli=None):
     try:
         offset = int(request.GET.get('offset', 0))
     except ValueError:
@@ -137,28 +143,29 @@ def render_list(request, key, base_url, cli=None):
                'pager_prev': offset - per_page,
                'pager_remaining': offset + per_page < total_pages,
                'pager_pages': pages,
+               'html_title': title,
                'modules': default_modules(None, extra_modules, limit=5, cli=cli),
-               }    
+               }
     return render_to_response('sisyphus/page_list.html', context, context_instance=RequestContext(request))
 
 def tag_list(request, slug):
     "Retrieve stories within a tag."
     cli = sisyphus.models.redis_client()
     key = sisyphus.models.TAG_PAGES_ZSET_BY_TREND % slug
-    return render_list(request, key, "/tag/%s/" % slug, cli=cli)
+    return render_list(request, key, "/tags/%s/" % slug, slug, cli=cli)
 
 def similar_list(request, slug, cli=None):
     "List of stories similar to this one."
     cli = sisyphus.models.redis_client()
     page = sisyphus.models.get_page(slug, cli=cli)
     key = sisyphus.models.ensure_similar_pages_key(page, cli=cli)
-    return render_list(request, key, "/similar/%s/" % slug, cli=cli)
+    return render_list(request, key, "/similar/%s/" % slug, "Similar to %s" % page['title'], cli=cli)
 
 def story_list(request, list_type, cli=None):
     "Create a storylist page."
     if list_type in STORY_LIST_KEYS:
         key = STORY_LIST_KEYS[list_type]
-        return render_list(request, key, "/list/%s/" % list_type, cli=cli)        
+        return render_list(request, key, "/list/%s/" % list_type, list_type, cli=cli)
     else:
         raise Http404
 
@@ -167,13 +174,21 @@ def page(request, slug):
     "Render a page."
     cli = sisyphus.models.redis_client()
     object = sisyphus.models.get_page(slug, cli=cli)
-    sisyphus.models.track(object, cli=cli)
     if object:
         object = sisyphus.models.convert_pub_date_to_datetime(object)
-        extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
-                         (0.1, analytics_module(cli=cli)),
-                         (0.71, context_module(object, cli=cli))]
+        extra_modules = []
+        if object['published']:
+            sisyphus.models.track(request, object, cli=cli)
+            before_mod, after_mod = context_module(object, cli=cli)
+            extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
+                             (0.1, analytics_module(cli=cli)),
+                             (0.71, before_mod),
+                             (0.72, after_mod),
+                             ]
+
         context = { 'page': object,
+                    'domain': settings.DOMAIN,
+                    'twitter_username': settings.TWITTER_USERNAME,
                     'modules': default_modules(object, extra_modules, cli=cli),
                     'disqus_shortname': settings.DISQUS_SHORTNAME,
                     }

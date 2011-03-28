@@ -1,14 +1,33 @@
-* backwards compat
-  * add media migration for old stuff
-  * add 302s for existing lifeflow stuff
-* deploy that shit
-* we have ``python ../local-sisyphus/blog/manage.py  update_page ../blog/example.html``
-    for deploying stories, but need the ecosystem for generating the clean HTML I want...
+V1
+
+* always let users know what storylist they are looking at
+* import comments from irrational exuberance v2.0, only those more than 2 months old...
 
 V2:
 
 * analytics
-  * implement analytics module
-  * implement analytics
-  * top referrers for each article
+  * product
+    * site overview
+      * lifetime refers
+      * lifetime traffic per post
+      * recent traffic per post
+    * page analytics
+      * lifetime traffic per referrer
+      * recent traffic per referrer
+      * traffic per hour for last 24 hours
+    * analytics module
+      * top 3 referers for this post
+      * link to see all analytics data
+  * notes
+    * nofollow links on the refers
+    * import as much apache log data as possible from existing site
+    * use flot to enhance the analytics tables which will initially just be tables...
+
+V3:
+
+* documentation
+
+V100:
+* add mobile CSS
 * add module pagination via ajax
+* add facebook metadata (this is a pain, and I need images, and my facebook userid)

@@ -1,10 +1,10 @@
 body, html {
     font-family: “Lucida Sans Unicode”, “Lucida Grande”, Verdana, Arial, Helvetica, sans-serif;
     line-height: 125%;
-    background: #F0F0F0;
+    background: #505070;
 }
 
-h1, h2, h3, h4, h5, #hd {
+h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     font-family: Georgia, Serif;
 }
 
@@ -16,14 +16,13 @@ h1, h2, h3, h4, h5, #hd {
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
     border-radius:5px;
-    background: #FFF;
+    background: #EEE;
     padding: 5px;
 }
 #body {
     border: 3px solid #555;
     padding: 10px 5px 5px 10px;
 }
-
 
 /*
  * Header CSS
@@ -43,7 +42,7 @@ h1, h2, h3, h4, h5, #hd {
      color:#fff;
      background:#999;
      text-decoration:none;
-     text-shadow:1px 1px 1px rgba(0,0,0,0.75); /* Text shadow to lift it a little */
+     text-shadow:1px 1px 1px rgba(70,70,70,0.75); /* Text shadow to lift it a little */
      -moz-border-radius:5px;
      -webkit-border-radius:5px;
      border-radius:5px;
@@ -69,6 +68,7 @@ h1, h2, h3, h4, h5, #hd {
     color:#fff;
     background:#999;
     border:#6b0c36;
+    text-shadow:1px 1px 1px rgba(70,70,70,0.75);
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
     border-radius:5px;
@@ -153,10 +153,25 @@ h1, h2, h3, h4, h5, #hd {
     color: #777;
     font-size: 90%;
 }
+#body .page .date {
+    padding-right: 20px;
+}
+
+#body .page .date .edited {
+     margin-right: 5px;
+     color: #555;
+}
+
+#body .page .social {
+    margin: 10px 20px;
+}
+
 
 #body .summary, #body .page .text p, #body .page pre, #body .page li {
     margin: 10px 10px 10px 20px;
-    width: 400px;
+}
+#body .summary, #body .page .text p {
+    width: 500px;
 }
 
 #body table {
@@ -175,6 +190,10 @@ h1, h2, h3, h4, h5, #hd {
     margin-right: 15px;
     font-size: 90%;
 }
+#body .page .tag {
+    margin-left: 20px;
+}
+
 
 #body .pagination.bottom {
       border-top: 1px solid #AAA;
@@ -191,13 +210,25 @@ h1, h2, h3, h4, h5, #hd {
 }
 
 #body .page .text ul {
-    margin: 10px 10px 10px 50px;
+    margin: 10px 10px 10px 20px;
     list-style: disc;
 }
 #body .page .text ol {
-    margin: 10px 10px 10px 50px;
+    margin: 10px 10px 10px 30px;
     list-style: decimal;
 }
+
+#body .page .text .toc {
+    border: 1px solid #999;
+    background: #FFF;
+    margin: 10px 50px 10px 50px;
+    font-size: 90%;
+}
+
+#body .page .text .toc ul {
+    line-height: 90%;
+}
+
 
 #body .page .text li {
     margin-bottom: 5px;
