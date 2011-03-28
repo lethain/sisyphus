@@ -1,16 +1,8 @@
-* write article on blog explaining stuff
-    * v3
-    * trending
-    * nginx rewrites for url backwards compatibility
-    * social sharing
-    * search
-    * tags
-    * similar content
-    * more wiki-like
-    * analytics
-* always let users know what storylist they are looking at
+V1
+
 * deploy
     * change DNS to point lethain.com to new VPS
+* always let users know what storylist they are looking at
 * import comments from irrational exuberance v2.0, only those more than 2 months old...
 
 V2:
