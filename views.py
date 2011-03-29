@@ -10,7 +10,22 @@ STORY_LIST_KEYS = { 'recent': sisyphus.models.PAGE_ZSET_BY_TIME,
                     'trending': sisyphus.models.PAGE_ZSET_BY_TREND,
                     }
 
+def tag_feed(request, tag_slug):
+    "Return RSS feed for a given tag."
+    tag_slug = tag_slug.rstrip("/")
+    cli = sisyphus.models.redis_client()
+    key = sisyphus.models.TAG_PAGES_ZSET_BY_TREND % tag_slug
+    page_dicts = sisyphus.models.get_pages(limit=25, key=key, cli=cli)
+    return generate_feed(request, page_dicts, cli)
+    
 def feed(request, feed_url):
+    "Return RSS feed of recent pages."
+    cli = sisyphus.models.redis_client()
+    page_dicts = sisyphus.models.get_pages(limit=25, cli=cli)
+    return generate_feed(request, page_dicts, cli)
+
+def generate_feed(request, page_dicts, cli):
+    page_dicts = [ sisyphus.models.convert_pub_date_to_datetime(x) for x in page_dicts ]
     f = django.utils.feedgenerator.Rss201rev2Feed(
         title=settings.RSS_TITLE,
         link=settings.RSS_LINK,
@@ -20,8 +35,6 @@ def feed(request, feed_url):
         feed_url=settings.RSS_FEED_URL,
         )
     cli = sisyphus.models.redis_client()
-    page_dicts = sisyphus.models.get_pages(limit=25, cli=cli)
-    page_dicts = [ sisyphus.models.convert_pub_date_to_datetime(x) for x in page_dicts ]
     for page in page_dicts:
         f.add_item(title=page['title'],
                    link="http://%s/%s/" % (settings.DOMAIN, page['slug']),
