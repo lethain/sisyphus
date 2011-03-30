@@ -139,6 +139,12 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     font-size: 150%;
 }
 
+#body h1.title {
+    font-size: 175%;
+    border-bottom: none;
+    margin-bottom: 30px;
+}
+
 #body p {
     margin-bottom: 20px;
 }

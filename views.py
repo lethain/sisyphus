@@ -10,6 +10,11 @@ STORY_LIST_KEYS = { 'recent': sisyphus.models.PAGE_ZSET_BY_TIME,
                     'trending': sisyphus.models.PAGE_ZSET_BY_TREND,
                     }
 
+STORY_LIST_TITLES = { 'recent': "Recent pages",
+                      'trending': "Popular pages"
+                      }
+TAG_LIST_TITLE = "Pages tagged with %s"
+
 def tag_feed(request, tag_slug):
     "Return RSS feed for a given tag."
     tag_slug = tag_slug.rstrip("/")
@@ -82,6 +87,7 @@ def tags_list(request):
 
     tags = sisyphus.models.tags(limit=1000, cli=cli)
     context = {'tags': tags,
+               'html_title':"Tags ordered by number of pages",
                'nav_tags': tags[:getattr(settings,'NUM_TAGS_NAV', 8)],
                'modules': default_modules(None, limit=5, cli=cli)
                }
@@ -162,7 +168,7 @@ def render_list(request, key, base_url, title, cli=None):
                'pager_prev': offset - per_page,
                'pager_remaining': offset + per_page < total_pages,
                'pager_pages': pages,
-               'html_title': title,
+               'html_title': STORY_LIST_TITLES.get(title, TAG_LIST_TITLE % title),
                'modules': default_modules(None, extra_modules, limit=5, cli=cli),
                }
     return render_to_response('sisyphus/page_list.html', context, context_instance=RequestContext(request))
@@ -233,6 +239,7 @@ def search(request):
     extra_modules = []
     context = { 'pages': pages,
                 'query': query,
+                'html_title': "%s pages match \"%s\"" % (len(pages), query),
                 'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
                 'modules': default_modules(None, extra_modules, cli=cli),
                     }

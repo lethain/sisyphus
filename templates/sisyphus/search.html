@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Results for "{{ query }}"{% endblock %}
 {% block body %}
+<h1 class="title">{{ html_title }}</h1>
 <div class="pages">
 {% if pages %}
 {% for page in pages %}

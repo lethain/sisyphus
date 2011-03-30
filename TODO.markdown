@@ -1,6 +1,5 @@
 V1
 
-* always let users know what storylist they are looking at
 * import comments from irrational exuberance v2.0, only those more than 2 months old...
 
 V2:
