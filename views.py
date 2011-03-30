@@ -77,7 +77,12 @@ def trending_module(limit=3, page=None, cli=None):
 
 def tags_list(request):
     cli = sisyphus.models.redis_client()
-    context = {'tags': sisyphus.models.tags(limit=1000, cli=cli),
+
+    # 'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
+
+    tags = sisyphus.models.tags(limit=1000, cli=cli)
+    context = {'tags': tags,
+               'nav_tags': tags[:getattr(settings,'NUM_TAGS_NAV', 8)],
                'modules': default_modules(None, limit=5, cli=cli)
                }
     return render_to_response('sisyphus/tag_list.html', context, context_instance=RequestContext(request))
@@ -152,6 +157,7 @@ def render_list(request, key, base_url, title, cli=None):
     context = {'pages': page_dicts,
                'pager_show': (len(page_dicts) >= per_page) or offset > per_page,
                'pager_offset': offset,
+               'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
                'pager_next': offset + per_page,
                'pager_prev': offset - per_page,
                'pager_remaining': offset + per_page < total_pages,
@@ -202,6 +208,7 @@ def page(request, slug):
         context = { 'page': object,
                     'domain': settings.DOMAIN,
                     'twitter_username': settings.TWITTER_USERNAME,
+                    'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
                     'modules': default_modules(object, extra_modules, cli=cli),
                     'disqus_shortname': settings.DISQUS_SHORTNAME,
                     }
@@ -226,6 +233,7 @@ def search(request):
     extra_modules = []
     context = { 'pages': pages,
                 'query': query,
+                'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
                 'modules': default_modules(None, extra_modules, cli=cli),
                     }
     return render_to_response('sisyphus/search.html', context, context_instance=RequestContext(request))

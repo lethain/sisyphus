@@ -11,5 +11,14 @@
       <input id="searchbox" name="q" value="{{ query }}">
       <input id="searchbutton" type="submit" value="Search">
     </form>
+<br class="clear">
+{% if nav_tags %}
+<ul id="tagnav" class="grid_12">
+{% for tag in nav_tags %}<li><a href="/tags/{{ tag.0 }}/">{{ tag.0 }} ({{ tag.1 }})</a></li>{% endfor %}
+<li><a href="/tags/">&hellip;</a></li>
+
+</ul>
+{% endif %}
 
 </div>
+
