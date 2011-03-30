@@ -1,6 +1,7 @@
 V1
 
-* import comments from irrational exuberance v2.0, only those more than 2 months old...
+*   filtering bad comments for comment import is mostly read,
+    but still need to load into disqus
 
 V2:
 
