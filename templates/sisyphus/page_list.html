@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ html_title|title }}{% endblock %}
+{% block title %}{{ html_title|title }} - {{ block.super }}{% endblock %}
 {% block body %}
 <h1 class="title">{{ html_title }}</h1>
 <div class="pages">

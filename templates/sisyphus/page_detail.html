@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block canonnical %}<link rel="canonical" href="http://{{ domain }}/{{ page.slug }}/">{% endblock %}
 
-{% block title %}{{ page.title }}{% endblock %}
+{% block title %}{{ page.title }} - {{ block.super }}{% endblock %}
 {% block body %}
 <div class="page">
   <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
