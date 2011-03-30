@@ -63,7 +63,7 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
 }
 #searchbutton {
     font-weight:bold;
-    width: 55px;
+    width: 50px;
     height: 26px;
     color:#fff;
     background:#999;
@@ -79,6 +79,10 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     color:#fff;
     background:#6b0c36;
     background:rgba(107,12,54,0.75); /* It'll look nice semi-transparent */
+}
+
+#hd form.grid_3 {
+    margin-right: 0;
 }
 
 /*
