@@ -184,6 +184,17 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     width: 500px;
 }
 
+#body .page .text blockquote {
+    font-family: Georgia, Serif;
+    margin: 10px 40px;
+    padding: 5px 10px;
+    color: #222;
+    border-left: 3px solid;
+}
+#body .page .text blockquote p {
+    margin-left: 0;
+}
+
 #body table {
     margin: 10px 10px 10px 30px;
 }
