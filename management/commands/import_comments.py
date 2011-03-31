@@ -8,9 +8,11 @@ from django.core.management.base import BaseCommand, CommandError
 import sisyphus.models
 from django.conf import settings
 import json
+import urllib2
 import time
 import datetime
 import os.path
+
 
 class Command(BaseCommand):
     args = "<json_db_dump_to_load json_db_dump_to_load ...>"
@@ -46,6 +48,24 @@ class Command(BaseCommand):
 
         return True
 
+    def load_into_disqus(self, comment):
+        """
+        comment should be a dictionary with keys:
+            [u'body', u'name', u'webpage', u'date', u'entry', u'email']
+        """
+        data = { "author_name": comment["name"],
+                 # decided sending their emails over might be somewhat
+                 # a breach of trust of users who shared emails...
+                 #"author_email": comment["email"],
+                 "date": comment["date"],
+                 "message": comment["body"],
+                 "author_url": comment["webpage"],
+                 }
+        print data
+
+
+
+
     def handle(self, *args, **options):
         print args
         for file in args:
@@ -55,6 +75,6 @@ class Command(BaseCommand):
                 comments = [ x['fields'] for x in data if x['model'] == "lifeflow.comment" ]
                 pre_filter = reversed(comments)
                 post_filter = [ x for x in pre_filter if self.filter(x) ]
-                for f in post_filter:
-                    print "%s (%s): %s" % (f['name'],  f['email'], f['body'][:10].replace("\n", " "))
-                print "pre %s, post %s" % (len(comments), len(post_filter))
+                for comment in post_filter:
+                    self.load_into_disqus(comment)
+
