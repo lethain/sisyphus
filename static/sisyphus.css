@@ -182,6 +182,7 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
 }
 #body .summary, #body .page .text p {
     width: 500px;
+    text-align: justify;
 }
 
 #body .page .text blockquote {
