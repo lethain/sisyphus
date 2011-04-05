@@ -2,6 +2,10 @@
 {% block canonnical %}<link rel="canonical" href="http://{{ domain }}/{{ page.slug }}/">{% endblock %}
 
 {% block title %}{{ page.title }} - {{ block.super }}{% endblock %}
+
+{% if page.startjs %} {% block extrajs %}{{ block.super }}{{ page.startjs|safe }}{% endblock %}{% endif %}
+{% if page.endjs %} {% block extrajsend %}{{ block.super }}{{ page.endjs|safe }}{% endblock %}{% endif %}
+
 {% block body %}
 <div class="page">
   <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
