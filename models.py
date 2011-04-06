@@ -121,7 +121,8 @@ def add_tag_counts(page, cli=None):
         pipeline = cli.pipeline()
         for tag in tags:
             pipeline.zscore(TAG_ZSET_BY_PAGES, tag)
-        page['tags'] = sorted(zip([ int(x) for x in pipeline.execute()], tags), reverse=True)
+        scores = [ x or 0 for x in pipeline.execute() ]
+        page['tags'] = sorted(zip([ int(x) for x in scores], tags), reverse=True)
     return page
 
 def get_page(page_slug, cli=None):
