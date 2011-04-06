@@ -12,8 +12,14 @@
   {% if page.published %}<span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
    {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
   {% include "sisyphus/tags.html" %}
-  {% if page.published %}{% if page.edit_date != page.pub_date %}<span class="date dateedited">edited {{ page.edit_date|timesince }} ago</span>{% endif %}{% endif %}
+  {% if page.published %}
+  {% if page.edit_date != page.pub_date %}
+  <span class="date dateedited">edited {{ page.edit_date|timesince }} ago</span>
   {% if not page.tags %}<br class="clear">{% endif %}
+  {% endif %}
+  {% endif %}
+
+  
    <div class="text">
   {{ page.html|safe }}
    </div>
