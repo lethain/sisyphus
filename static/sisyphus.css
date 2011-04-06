@@ -167,9 +167,9 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     padding-right: 20px;
 }
 
-#body .page .date .edited {
-     margin-right: 5px;
+#body .page .dateedited {
      color: #555;
+     float: right;
 }
 
 #body .page .social {

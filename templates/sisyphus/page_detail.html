@@ -9,9 +9,11 @@
 {% block body %}
 <div class="page">
   <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
-  {% if page.published %}<span class="date">{% if page.edit_date != page.pub_date %}<span class="edited">(edited {{ page.edit_date|date:"SHORT_DATE_FORMAT" }})</span>{% endif %}{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
-   {% include "sisyphus/tags.html" %}
+  {% if page.published %}<span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
    {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
+  {% include "sisyphus/tags.html" %}
+  {% if page.published %}{% if page.edit_date != page.pub_date %}<span class="date dateedited">edited {{ page.edit_date|timesince }} ago</span>{% endif %}{% endif %}
+  {% if not page.tags %}<br class="clear">{% endif %}
    <div class="text">
   {{ page.html|safe }}
    </div>
