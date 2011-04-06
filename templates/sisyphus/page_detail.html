@@ -10,10 +10,7 @@
 <div class="page">
   <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
   {% if page.published %}<span class="date">{% if page.edit_date != page.pub_date %}<span class="edited">(edited {{ page.edit_date|date:"SHORT_DATE_FORMAT" }})</span>{% endif %}{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
-  {% if page.tags %}
-  {% for tag in page.tags %}<span class="tag"><a href="/tags/{{ tag }}/">{{ tag }}</a></span>{% endfor %}
-  <br class="clear">
-  {% endif %}
+   {% include "sisyphus/tags.html" %}
    {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
    <div class="text">
   {{ page.html|safe }}

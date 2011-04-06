@@ -80,7 +80,7 @@ def track(request, page, cli=None):
 
     # update all-time pageview analytics
     cli.zincrby(ANALYTICS_PAGEVIEW, slug, 1)
-    
+
     # update pageview analytics for last N hours
     ANALYTICS_PAGEVIEW_QTY = "analytics.pv_qty.%s"
     ANALYTICS_PAGEVIEW_BUCKET = "analytics.pv_bucket.%s"
@@ -90,7 +90,7 @@ def track(request, page, cli=None):
     # update trending data
     cli.zincrby(PAGE_ZSET_BY_TREND, slug, PAGEVIEW_BONUS)
     for tag_slug in page['tags']:
-        cli.zincrby(TAG_PAGES_ZSET_BY_TREND % tag_slug, slug, PAGEVIEW_BONUS)
+        cli.zincrby(TAG_PAGES_ZSET_BY_TREND % tag_slug[1], slug, PAGEVIEW_BONUS)
 
 def search(raw_query, cli=None):
     whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
@@ -103,7 +103,7 @@ def search(raw_query, cli=None):
         slugs = [ x['slug'] for x in search_resp ]
         if slugs:
             cli = cli or redis_client()
-            pages = [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in slugs]) ]
+            pages = [ add_tag_counts(json.loads(y)) for y in cli.mget([ PAGE_STRING % x for x in slugs]) ]
     finally:
         if searcher is not None:
             searcher.close()
@@ -113,11 +113,22 @@ def search(raw_query, cli=None):
 def redis_client(host="localhost", port=6379, db=0):
     return redis.Redis(host, port, db=db)
 
+def add_tag_counts(page, cli=None):
+    "Extend page with tag counts."
+    cli = cli or redis_client()
+    tags = page['tags']
+    if tags:
+        pipeline = cli.pipeline()
+        for tag in tags:
+            pipeline.zscore(TAG_ZSET_BY_PAGES, tag)
+        page['tags'] = sorted(zip([ int(x) for x in pipeline.execute()], tags), reverse=True)
+    return page
+
 def get_page(page_slug, cli=None):
     "Retrieve a page."
     cli = cli or redis_client()
     resp = cli.get(PAGE_STRING % page_slug)
-    return resp and json.loads(resp) or resp
+    return resp and add_tag_counts(json.loads(resp)) or resp
 
 def add_tag(slug, created=None, cli=None):
     "Idempotently create a new tag."
@@ -190,7 +201,7 @@ def get_pages(offset=0, limit=10, key=PAGE_ZSET_BY_TIME, reverse=True, cli=None)
     cli = cli or redis_client()
     page_slugs = get_page_slugs(offset, limit, key, reverse, cli)
     if page_slugs:
-        return [ json.loads(y) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
+        return [ add_tag_counts(json.loads(y)) for y in cli.mget([ PAGE_STRING % x for x in page_slugs]) ]
     else:
         return []
 
@@ -215,7 +226,7 @@ def ensure_similar_pages_key(page, cli=None):
     cli = cli or redis_client()
     sim_key = SIMILAR_PAGES_BY_TREND % page['slug']
     if not cli.exists(sim_key):
-        tag_keys = [ TAG_PAGES_ZSET_BY_TREND % x for x in page.get('tags',[])]
+        tag_keys = [ TAG_PAGES_ZSET_BY_TREND % x[1] for x in page.get('tags',[])]
         if tag_keys:
             cli.zunionstore(sim_key, tag_keys)
             cli.zrem(sim_key, page['slug'])

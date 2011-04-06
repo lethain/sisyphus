@@ -210,13 +210,16 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     font-weight: bold;
 }
 
-
 #body .tag {
-    margin-right: 15px;
     font-size: 90%;
 }
 #body .page .tag {
     margin-left: 20px;
+}
+#body .tag .tagcount {
+    color: #777;
+    margin-left: 5px;
+    font-size: 80%;
 }
 
 

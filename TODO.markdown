@@ -1,6 +1,5 @@
 V1
 
-* show # items in each tag for storylists/story details
 * update edit time to use timesince template filter, move it onto line below the date
 *   filtering bad comments for comment import is mostly read,
     but still need to load into disqus
