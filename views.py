@@ -201,6 +201,12 @@ def analytics(request):
     context = { 'domain': settings.DOMAIN,
                 'modules': default_modules(None, extra_modules, cli=cli),
                 'analytics': sisyphus.analytics.site_analytics(cli=cli),
+                'ana_min_page_pv': settings.MIN_PAGE_PV,
+                'ana_min_ref_pv': settings.MIN_PAGE_REF_PV,
+                'ana_min_useragent': settings.MIN_USERAGENT,
+                'ana_max_results': settings.MAX_ANALYTICS_RESULTS,
+
+
                 }
     return render_to_response('sisyphus/analytics.html', context, context_instance=RequestContext(request))
 
@@ -225,8 +231,9 @@ def page_analytics(request, slug):
                     'twitter_username': settings.TWITTER_USERNAME,
                     'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
                     'modules': default_modules(object, extra_modules, cli=cli),
-                    'analytics': sisyphus.analytics.page_analytics(slug, cli=cli),
-
+                    'analytics': sisyphus.analytics.page_analytics(object, cli=cli),
+                    'ana_max_results': settings.MAX_ANALYTICS_RESULTS,
+                    'ana_min_page_ref_pv':settings.MIN_PAGE_REF_PV,
                     }
         return render_to_response('sisyphus/page_analytics.html', context, context_instance=RequestContext(request))
     else:

@@ -6,27 +6,47 @@
 <div class="page">
   <h1>Site Analytics</h1>
    <div class="text analytics">
-     <h2>User Agents</h2>
+     <p>
+       Take a few minutes to learn about how traffic has interacted with the content pages on this site.
+       The aim is explore what kinds of content is successful on this site, rather than exploring the
+       effectiveness of navigation.
+     </p>
+
+     <h2>Pageviews for Recent Days</h2>
+     <p>Show daily pageviews for trailing window.</p> 
      <table>
-       <thead><tr><td>User Agent</td><td>Views</td></tr></thead>
+       <thead><tr><td>Date</td><td>Views</td></tr></thead>
        <tbody>
-       {% for agent, count in analytics.useragents %}<tr><td>{{ agent }}</td><td>{{ count }}</td></tr>{% endfor %}
+       {% for date, count in analytics.recent_days %}<tr><td>{{ date|date:"SHORT_DATE_FORMAT" }}</td><td>{{ count }}</td></tr>{% endfor %}
        </tbody>
      </table>
 
-     <h2>Pageviews</h2>
+
+     <h2>Top Pages by Pageviews</h2>
+     <p>Traffic to each content page (navigation pages, etc are not included). Show up to {{ ana_max_results }} pages with at least {{ ana_min_page_pv }} pageviews.</p>
+
      <table>
        <thead><tr><td>Page</td><td>Views</td></tr></thead>
        <tbody>
-       {% for slug, count in analytics.pageviews %}<tr><td><a href="/{{ slug }}/">/{{ slug }}/</a></td><td>{{ count }}</td></tr>{% endfor %}
+       {% for slug, count in analytics.pageviews %}<tr><td><a href="/analytics/{{ slug }}/">/{{ slug }}/</a></td><td>{{ count }}</td></tr>{% endfor %}
        </tbody>
      </table>
 
-     <h2>Referrers</h2>
+     <h2>Top Referrers by Pageviews</h2>
+     <p>Top referrers for this site. Show up to {{ ana_max_results }} referrers with at least {{ ana_min_ref_pv }} pageviews.</p>
      <table>
        <thead><tr><td>Refer</td><td>Views</td></tr></thead>
        <tbody>
        {% for refer, count in analytics.referrers %}<tr><td>{{ refer|lower }}</td><td>{{ count }}</td></tr>{% endfor %}
+       </tbody>
+     </table>
+
+     <h2>User Agents</h2>
+     <p>Top user-agents for this site. Show up to {{ ana_max_results }} user-agents with at least {{ ana_min_useragent }} pageviews.</p>
+     <table>
+       <thead><tr><td>User Agent</td><td>Views</td></tr></thead>
+       <tbody>
+       {% for agent, count in analytics.useragents %}<tr><td>{{ agent }}</td><td>{{ count }}</td></tr>{% endfor %}
        </tbody>
      </table>
    </div>

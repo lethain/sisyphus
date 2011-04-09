@@ -21,6 +21,7 @@ class Command(BaseCommand):
     date_format = "%d/%b/%Y:%H:%M:%S"
     ignore = ('/','/tags/','/favicon.ico/', '/feeds/')
     errors = []
+    clean_keys = True #False
 
     def extract(self, line):
         matches = self.log_pattern.match(line)
@@ -38,9 +39,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         cli = sisyphus.models.redis_client()
-        keys = cli.keys("analytics.*")
-        if keys:
-            cli.delete(*keys)
+        if self.clean_keys:
+            keys = cli.keys("analytics.*")
+            if keys:
+                cli.delete(*keys)
 
         for file in args:
             print "Loading data from %s..." % (file,)
