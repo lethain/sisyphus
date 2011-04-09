@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block canonnical %}<link rel="canonical" href="http://{{ domain }}/analytics/">{% endblock %}
+{% block title %}Analytics - {{ block.super }}{% endblock %}
+
+{% block body %}
+<div class="page">
+  <h1>Site Analytics</h1>
+   <div class="text analytics">
+     <h2>User Agents</h2>
+     <table>
+       <thead><tr><td>User Agent</td><td>Views</td></tr></thead>
+       <tbody>
+       {% for agent, count in analytics.useragents %}<tr><td>{{ agent }}</td><td>{{ count }}</td></tr>{% endfor %}
+       </tbody>
+     </table>
+
+     <h2>Pageviews</h2>
+     <table>
+       <thead><tr><td>Page</td><td>Views</td></tr></thead>
+       <tbody>
+       {% for slug, count in analytics.pageviews %}<tr><td><a href="/{{ slug }}/">/{{ slug }}/</a></td><td>{{ count }}</td></tr>{% endfor %}
+       </tbody>
+     </table>
+
+     <h2>Referrers</h2>
+     <table>
+       <thead><tr><td>Refer</td><td>Views</td></tr></thead>
+       <tbody>
+       {% for refer, count in analytics.referrers %}<tr><td>{{ refer|lower }}</td><td>{{ count }}</td></tr>{% endfor %}
+       </tbody>
+     </table>
+   </div>
+</div>
+
+{% endblock %}
+

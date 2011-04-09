@@ -4,6 +4,7 @@ from django.http import HttpResponse, Http404
 from django.template import RequestContext
 from django.conf import settings
 import sisyphus.models
+import sisyphus.analytics
 import django.utils.feedgenerator
 
 STORY_LIST_KEYS = { 'recent': sisyphus.models.PAGE_ZSET_BY_TIME,
@@ -194,6 +195,42 @@ def story_list(request, list_type, cli=None):
     else:
         raise Http404
 
+def analytics(request):
+    cli = sisyphus.models.redis_client()
+    extra_modules = [(0.3, tags_module(limit=3, cli=cli))]
+    context = { 'domain': settings.DOMAIN,
+                'modules': default_modules(None, extra_modules, cli=cli),
+                'analytics': sisyphus.analytics.site_analytics(cli=cli),
+                }
+    return render_to_response('sisyphus/analytics.html', context, context_instance=RequestContext(request))
+
+def page_analytics(request, slug):
+    "Render a page's analytics."
+    cli = sisyphus.models.redis_client()
+    object = sisyphus.models.get_page(slug, cli=cli)
+    if object and object['published']:
+        object = sisyphus.models.convert_pub_date_to_datetime(object)
+        extra_modules = []
+        if object['published']:
+            sisyphus.models.track(request, object, cli=cli)
+            before_mod, after_mod = context_module(object, cli=cli)
+            extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
+                             (0.1, analytics_module(cli=cli)),
+                             (0.71, before_mod),
+                             (0.72, after_mod),
+                             ]
+
+        context = { 'page': object,
+                    'domain': settings.DOMAIN,
+                    'twitter_username': settings.TWITTER_USERNAME,
+                    'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
+                    'modules': default_modules(object, extra_modules, cli=cli),
+                    'analytics': sisyphus.analytics.page_analytics(slug, cli=cli),
+
+                    }
+        return render_to_response('sisyphus/page_analytics.html', context, context_instance=RequestContext(request))
+    else:
+        raise Http404
 
 def page(request, slug):
     "Render a page."

@@ -21,7 +21,6 @@ from django.conf import settings
 import redis
 import time
 import datetime
-import urlparse
 import whoosh.index
 import whoosh.fields
 import whoosh.qparser
@@ -29,6 +28,7 @@ try:
     import json
 except ImportError:
     import simplejson as json
+import sisyphus.analytics
 
 EMPTY_ZSET = "empty_zset"
 TAG_ZSET_BY_TIME = "tags_by_times"
@@ -49,17 +49,7 @@ PAGE_SCHEMA = whoosh.fields.Schema(title=whoosh.fields.TEXT(),
                                    slug=whoosh.fields.ID(unique=True, stored=True),
                                    )
 
-ANALYTICS_REFER = "analytics.refer"
-ANALYTICS_REFER_PAGE = "analytics.refer.%s"
-ANALYTICS_PAGEVIEW = "analytics.pv"
-ANALYTICS_PAGEVIEW_QTY = "analytics.pv_qty.%s"
-ANALYTICS_PAGEVIEW_BUCKET = "analytics.pv_bucket.%s"
 
-def standardize_refer(request):
-    url = request.META.get('HTTP_REFERER', '')
-    parts = urlparse.urlparse(url)
-    print parts
-    return parts.netloc
 
 def timebucket(period=3600):
     "Return current time bucket."
@@ -68,29 +58,12 @@ def timebucket(period=3600):
 def track(request, page, cli=None):
     "Log pageview into analytics."
     slug = page['slug']
-
-    # TODO: implement analytics stuff, currently pushing it
-    #       to post launch
-    """
-    ref = standardize_refer(request)
-
-    # update referer analytics
-    cli.zincrby(ANALYTICS_REFER, ref, 1)
-    cli.zincrby(ANALYTICS_REFER_PAGE % slug, ref, 1)
-
-    # update all-time pageview analytics
-    cli.zincrby(ANALYTICS_PAGEVIEW, slug, 1)
-
-    # update pageview analytics for last N hours
-    ANALYTICS_PAGEVIEW_QTY = "analytics.pv_qty.%s"
-    ANALYTICS_PAGEVIEW_BUCKET = "analytics.pv_bucket.%s"
-    #cli.zincrby(ANALYTICS_PAGEVIEW_BUCKET % slug, timebucket(), 1)
-    """
-
     # update trending data
     cli.zincrby(PAGE_ZSET_BY_TREND, slug, PAGEVIEW_BONUS)
     for tag_slug in page['tags']:
         cli.zincrby(TAG_PAGES_ZSET_BY_TREND % tag_slug[1], slug, PAGEVIEW_BONUS)
+    if settings.REALTIME_ANALYTICS:
+        sisyphus.analytics.track(request, page, cli)
 
 def search(raw_query, cli=None):
     whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)

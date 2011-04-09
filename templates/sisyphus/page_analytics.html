@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block canonnical %}<link rel="canonical" href="http://{{ domain }}/analytics/{{ page.slug }}/">{% endblock %}
+{% block title %}{{ page.title }} - Analytics - {{ block.super }}{% endblock %}
+
+{% block body %}
+<div class="page">
+  <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
+  {% if page.published %}<span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
+  {% include "sisyphus/tags.html" %}
+   <div class="text analytics">
+     <h2>Summary</h2>
+     <p class="summary">{{ page.summary|safe }}</p>
+     <h2>Statistics</h2>
+     <table>
+       <thead><tr><td>Refer</td><td>Views</td></tr></thead>
+       <tbody>
+	 <tr><td>Pageviews</td><td>{{ analytics.views }}</td></tr>
+       </tbody>
+     </table>
+
+     <h2>Referrers</h2>
+     <table>
+       <thead><tr><td>Refer</td><td>Views</td></tr></thead>
+       <tbody>
+       {% for refer, count in analytics.referrers %}<tr><td>{{ refer|lower }}</td><td>{{ count }}</td></tr>{% endfor %}
+       </tbody>
+     </table>
+   </div>
+</div>
+
+{% endblock %}
+

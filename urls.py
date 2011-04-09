@@ -11,5 +11,7 @@ urlpatterns = patterns('',
     (r'^similar/(?P<slug>.+?)/$', 'sisyphus.views.similar_list'),
     (r'^list/(?P<list_type>[a-z]+)/$', 'sisyphus.views.story_list'),
     (r'^$', 'sisyphus.views.frontpage'),
+    (r'^analytics/$', 'sisyphus.views.analytics'),
+    (r'^analytics/(?P<slug>.+?)/$', 'sisyphus.views.page_analytics'),
     (r'^(?P<slug>.+?)/$', 'sisyphus.views.page'),
 )

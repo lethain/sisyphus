@@ -202,6 +202,10 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
 #body table {
     margin: 10px 10px 10px 30px;
 }
+#body .analytics table {
+    width: 500px;
+}
+
 #body table td {
     border: 1px solid #777;
     padding: 5px;
