@@ -5,7 +5,6 @@ import django.http
 import json
 import time
 import re
-import sisyphus.googleanalytics
 
 
 class Command(BaseCommand):
