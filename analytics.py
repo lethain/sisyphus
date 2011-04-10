@@ -106,7 +106,7 @@ def track(request, page, cli, now=None):
             not useragent.startswith('Reeder'):
         refer = standardize_refer(request)
         ip = "X-Real-IP" # if proxied
-        ip = request.META.get("X-Real-IP", request.META.get("REMOTE_ADDR", "127.0.0.1"))
+        ip = request.META.get("HTTP_X_REAL_IP", request.META.get("REMOTE_ADDR", "127.0.0.1"))
         day_bucket = now / (24 * 60 * 60)
         hour_bucket = now / (60 * 60)
         min_bucket = now / 60
