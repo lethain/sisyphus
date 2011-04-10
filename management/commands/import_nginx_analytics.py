@@ -20,7 +20,6 @@ class Command(BaseCommand):
 (?P<agent>.*)""", re.VERBOSE)
     date_format = "%d/%b/%Y:%H:%M:%S"
     ignore = ('/','/tags/','/favicon.ico/', '/feeds/')
-    errors = []
     clean_keys = True #False
 
     def extract(self, line):
@@ -35,7 +34,7 @@ class Command(BaseCommand):
                 'refer': matches.group('refer').strip(),
                 }
         except AttributeError:
-            self.errors.append(line)
+            pass
 
     def handle(self, *args, **kwargs):
         cli = sisyphus.models.redis_client()
@@ -49,18 +48,14 @@ class Command(BaseCommand):
             start = time.time()
             i = 0
             valid = 0
-            methods = {}
-            entries = {}
             with open(file, 'r') as fin:
-                for line in fin.readlines():
+                for line in fin:
                     extracted = self.extract(line)
                     if extracted:
                         method = extracted['method']
-                        methods[method] = methods.get(method, 0) + 1
                         if method == 'GET':
                             path = extracted['path']
                             if path.endswith('/') and path not in self.ignore and len(path.split('/')) == 3:
-                                entries[path] = entries.get(path, 0) + 1
                                 req = django.http.HttpRequest()
                                 req.META['HTTP_REFERER'] = extracted['refer'] if extracted['refer'] != '-' else ""
                                 req.META['REMOTE_ADDR'] = extracted['ip']
@@ -71,5 +66,4 @@ class Command(BaseCommand):
 
                     i += 1
             end = time.time()
-            print methods
             print "Loading %s valid records of %s total records took %.2f seconds" % (valid, i, end-start)
