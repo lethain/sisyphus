@@ -102,7 +102,7 @@ def abbreviated_site_analytics(cli=None, now=None, max_results=None):
                                     "+inf",
                                     settings.MIN_PAGE_REF_PV,
                                     start=0,
-                                    num=max_results+4,
+                                    num=max_results+5,
                                     withscores=True)
     top_refs = [ (x.replace("www.","").replace(".com",""),int(y)) for x,y in top_refs if x  not in FILTERED_REFS ]
     return top_refs[:max_results]
