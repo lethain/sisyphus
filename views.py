@@ -54,8 +54,8 @@ def about_module(cli=None):
     html = """<img src="/static/author.png">
 <p>Your delightful host.<br>
 Email: lethain[at]gmail<br>
-Develop at <a href="http://digg.com/">Digg</a>.<br>
-Used to <a href="http://developer.yahoo.com/search/boss/">Yahoo! BOSS</a>.</p>"""
+Develop at <a href="http://socialcode.com/">SocialCode</a>.<br>
+Used to <a href="http://digg.com/">Digg</a>, and <a href="http://developer.yahoo.com/search/boss/">Y!</a>.</p>"""
     return { 'title':'Will Larson', 'html':html }
 
 def storylist_module(key, title, more_link=None, limit=3, cli=None, page=None):
