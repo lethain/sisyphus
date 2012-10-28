@@ -120,6 +120,25 @@ def add_page_to_tag(tag_slug, page_slug, created=None, cli=None):
         cli.zadd(TAG_PAGES_ZSET_BY_TREND % tag_slug, page_slug, created)
         cli.zincrby(TAG_ZSET_BY_PAGES, tag_slug, 1)
 
+def index_page(page):
+    """
+    Create a search index for this page. Mostly useful if recreating
+    Sisyphus from a Redis snapshot but missing Whoosh index, e.g:
+
+        [index_page(x) for x in get_pages(0, 100000)]
+
+    Would reindex the 100k most recent posts.
+    """
+    try:
+        whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
+    except Exception, e:
+        whoosh_index = whoosh.index.create_in(settings.WHOOSH_INDEXDIR, PAGE_SCHEMA)
+    writer = whoosh_index.writer()
+    to_index = {'title': page['title'], 'summary':page['summary'], 'content':page['html'], 'slug':page['slug']}
+    writer.update_document(**to_index)
+    writer.commit()
+
+
 def add_page(page, index=True, cli=None):
     """
     Create a page.
@@ -150,15 +169,7 @@ def add_page(page, index=True, cli=None):
         for tag in page['tags']:
             add_page_to_tag(tag, slug, created=page['pub_date'], cli=cli)
 
-        # add to search index
-        try:
-            whoosh_index = whoosh.index.open_dir(settings.WHOOSH_INDEXDIR)
-        except Exception, e:
-            whoosh_index = whoosh.index.create_in(settings.WHOOSH_INDEXDIR, PAGE_SCHEMA)
-        writer = whoosh_index.writer()
-        to_index = {'title': page['title'], 'summary':page['summary'], 'content':page['html'], 'slug':page['slug']}
-        writer.update_document(**to_index)
-        writer.commit()
+        index_page(page)
 
     cli.set(PAGE_STRING % slug, json.dumps(page))
 
