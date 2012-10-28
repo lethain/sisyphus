@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}{{ html_title|title }}{% endblock %}
+{% block title %}{{ html_title|title }} - {{ block.super }}{% endblock %}
 {% block body %}
+<h1 class="title">{{ html_title }}</h1>
 <div class="pages">
 {% for page in pages %}
   <div class="page">
     <h2><a href="/{{ page.slug }}/">{{ page.title }}</a></h2>
     <span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>
-    {% for tag in page.tags %}<span class="tag"><a href="/tags/{{ tag }}/">{{ tag }}</a></span>{% endfor %}
-    <br class="clear">
+    {% include "sisyphus/tags.html" %}
     <p class="summary">{{ page.summary|safe }}</p>
   </div>
 {% endfor %}

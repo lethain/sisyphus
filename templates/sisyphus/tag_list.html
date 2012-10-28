@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Tags on {{ block.super }}{% endblock %}
 {% block body %}
+<h1 class="title">{{ html_title }}</h1>
 <ul class="taglist">
 {% for tag in tags %}
 {% if tag.1 %}<li><a href="/tags/{{ tag.0 }}/">{{ tag.0 }}</a>: {{ tag.1 }}</li>{% endif %}

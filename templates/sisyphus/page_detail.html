@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 {% block canonnical %}<link rel="canonical" href="http://{{ domain }}/{{ page.slug }}/">{% endblock %}
 
-{% block title %}{{ page.title }}{% endblock %}
+{% block title %}{{ page.title }} - {{ block.super }}{% endblock %}
+
+{% if page.startjs %} {% block extrajs %}{{ block.super }}{{ page.startjs|safe }}{% endblock %}{% endif %}
+{% if page.endjs %} {% block extrajsend %}{{ block.super }}{{ page.endjs|safe }}{% endblock %}{% endif %}
+
 {% block body %}
 <div class="page">
   <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
-  {% if page.published %}<span class="date">{% if page.edit_date != page.pub_date %}<span class="edited">(edited {{ page.edit_date|date:"SHORT_DATE_FORMAT" }})</span>{% endif %}{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
-  {% if page.tags %}
-  {% for tag in page.tags %}<span class="tag"><a href="/tags/{{ tag }}/">{{ tag }}</a></span>{% endfor %}
-  <br class="clear">
-  {% endif %}
+  {% if page.published %}<span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
    {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
+  {% include "sisyphus/tags.html" %}
    <div class="text">
   {{ page.html|safe }}
    </div>

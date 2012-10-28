@@ -34,7 +34,7 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
 
 #hd h1 {
     font-weight: bold;
-    padding: 5px;
+    padding: 5px 5px 5px 0;
 }
 
 #hd h1 a {
@@ -63,7 +63,7 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
 }
 #searchbutton {
     font-weight:bold;
-    width: 60px;
+    width: 50px;
     height: 26px;
     color:#fff;
     background:#999;
@@ -79,6 +79,10 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     color:#fff;
     background:#6b0c36;
     background:rgba(107,12,54,0.75); /* It'll look nice semi-transparent */
+}
+
+#hd form.grid_3 {
+    margin-right: 0;
 }
 
 /*
@@ -139,6 +143,12 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     font-size: 150%;
 }
 
+#body h1.title {
+    font-size: 175%;
+    border-bottom: none;
+    margin-bottom: 30px;
+}
+
 #body p {
     margin-bottom: 20px;
 }
@@ -157,9 +167,9 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     padding-right: 20px;
 }
 
-#body .page .date .edited {
-     margin-right: 5px;
+#body .page .dateedited {
      color: #555;
+     float: right;
 }
 
 #body .page .social {
@@ -172,11 +182,30 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
 }
 #body .summary, #body .page .text p {
     width: 500px;
+    text-align: justify;
+}
+#body .page .text p + p {
+    margin-top: 15px;
+}
+
+#body .page .text blockquote {
+    font-family: Georgia, Serif;
+    margin: 10px 40px;
+    padding: 5px 10px;
+    color: #222;
+    border-left: 3px solid;
+}
+#body .page .text blockquote p {
+    margin-left: 0;
 }
 
 #body table {
     margin: 10px 10px 10px 30px;
 }
+#body .analytics table {
+    width: 500px;
+}
+
 #body table td {
     border: 1px solid #777;
     padding: 5px;
@@ -185,13 +214,16 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     font-weight: bold;
 }
 
-
 #body .tag {
-    margin-right: 15px;
     font-size: 90%;
 }
 #body .page .tag {
     margin-left: 20px;
+}
+#body .tag .tagcount {
+    color: #777;
+    margin-left: 5px;
+    font-size: 80%;
 }
 
 

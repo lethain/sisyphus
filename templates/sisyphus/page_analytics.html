@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block canonnical %}<link rel="canonical" href="http://{{ domain }}/analytics/{{ page.slug }}/">{% endblock %}
+{% block title %}{{ page.title }} - Analytics - {{ block.super }}{% endblock %}
+
+{% block body %}
+<div class="page">
+  <h2><a href="/{{ page.slug }}">{{ page.title }}</a></h2>
+  <span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>
+  {% include "sisyphus/tags.html" %}
+   <div class="text analytics">
+     <h2>Page Summary</h2>
+     <p class="summary">{{ page.summary|safe }}</p>
+     <h2>Page Statistics</h2>
+
+     <p>
+       <a href="/{{ page.slug }}">{{ page.title }}</a> has received <strong>{{ analytics.views }}</strong> pageviews
+       (an average of <strong>{{ analytics.avg_daily_views|floatformat }}</strong> views per day since publication).
+       
+     </p>
+
+     <h2>Pageviews for Recent Days</h2>
+     <p>Show daily pageviews for trailing window.</p> 
+     <table>
+       <thead><tr><td>Date</td><td>Views</td></tr></thead>
+       <tbody>
+       {% for date, count in analytics.recent_days %}<tr><td>{{ date|date:"SHORT_DATE_FORMAT" }}</td><td>{{ count }}</td></tr>{% endfor %}
+       </tbody>
+     </table>
+
+     <h2>Page Referrers</h2>
+     <p>Top referrers for this page. Show up to {{ ana_max_results }} referrers with at least {{ ana_min_page_ref_pv }} pageviews.</p>
+
+     <table>
+       <thead><tr><td>Refer</td><td>Views</td></tr></thead>
+       <tbody>
+       {% for refer, count in analytics.referrers %}<tr><td>{{ refer|lower }}</td><td>{{ count }}</td></tr>{% endfor %}
+       </tbody>
+     </table>
+   </div>
+</div>
+
+{% endblock %}
+

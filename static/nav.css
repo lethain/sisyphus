@@ -2,18 +2,24 @@
  From http://www.venturelab.co.uk/demos/css-dropdown/
 	NAV
 \*------------------------------------*/
-#nav,.pager{
+#nav,#tagnav, .pager{
 	list-style:none;
 	font-weight:bold;
 	margin-bottom:10px;
 }
-#nav li, .pager li{
+#tagnav {
+    font-size: 90%;
+    line-height: 90%;
+}
+
+
+#nav li, #tagnav li, .pager li{
      float:left;
      margin-right:10px;
      position:relative;
      display:block;
 }
-#nav li a, .pager li a{
+#nav li a, #tagnav li a, .pager li a{
      display:block;
      padding:5px;
      color:#fff;
@@ -24,43 +30,13 @@
      -webkit-border-radius:5px;
      border-radius:5px;
 }
-#nav li a:hover, .pager li a:hover{
+
+#tagnav li a {
+    background:#666;
+}
+
+#nav li a:hover, #tagnav li a:hover, .pager li a:hover{
      color:#fff;
      background:#6b0c36;
      background:rgba(107,12,54,0.75); /* It'll look nice semi-transparent */
-}
-
-/*--- DROPDOWN ---*/
-#nav ul,.pager ul{
-     list-style:none;
-     position:absolute;
-     left:-9999px; /* Hide off-screen when not needed (this is more accessible than display:none;) */
-     opacity:0; /* Set initial state to transparent */
-     -webkit-transition:0.25s linear opacity; /* Make the dropdown fade-in in Webkit */
-}
-#nav ul li,.pager ul li{
-     padding-top:1px; /* Introducing a padding between the li and the a give the illusion spaced items */
-     float:none;
-}
-#nav ul a,.pager ul a{
-     white-space:nowrap; /* Stop text wrapping and creating multi-line dropdown items */
-     display:block;
-}
-#nav li:hover ul, .pager li:hover ul{ /* Display the dropdown on hover */
-     left:0; /* Bring back on-screen when needed */
-     opacity:1; /* Fade to opaque */
-}
-#nav li:hover a,.pager li:hover a{ /* Set styles for top level when dropdown is hovered */
-     background:#6b0c36;
-     background:rgba(107,12,54,0.75); /* It'll look nice semi-transparent */
-}
-#nav li:hover ul a,.pager li:hover ul a{ /* Override some top level styles when dropdown is hovered */
-     text-decoration:none;
-     -webkit-transition:-webkit-transform 0.075s linear;
-}
-#nav li:hover ul li a:hover,.pager li:hover ul li a:hover{ /* Set styles for dropdown when items are hovered */
-     background:#999;
-     background:rgba(51,51,51,0.75); /* It'll look nice semi-transparent */
-     -moz-transform:scale(1.05);
-     -webkit-transform:scale(1.05);
 }

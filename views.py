@@ -4,13 +4,34 @@ from django.http import HttpResponse, Http404
 from django.template import RequestContext
 from django.conf import settings
 import sisyphus.models
+import sisyphus.analytics
 import django.utils.feedgenerator
 
 STORY_LIST_KEYS = { 'recent': sisyphus.models.PAGE_ZSET_BY_TIME,
                     'trending': sisyphus.models.PAGE_ZSET_BY_TREND,
                     }
 
+STORY_LIST_TITLES = { 'recent': "Recent pages",
+                      'trending': "Popular pages"
+                      }
+TAG_LIST_TITLE = "Pages tagged with %s"
+
+def tag_feed(request, tag_slug):
+    "Return RSS feed for a given tag."
+    tag_slug = tag_slug.rstrip("/")
+    cli = sisyphus.models.redis_client()
+    key = sisyphus.models.TAG_PAGES_ZSET_BY_TREND % tag_slug
+    page_dicts = sisyphus.models.get_pages(limit=25, key=key, cli=cli)
+    return generate_feed(request, page_dicts, cli)
+
 def feed(request, feed_url):
+    "Return RSS feed of recent pages."
+    cli = sisyphus.models.redis_client()
+    page_dicts = sisyphus.models.get_pages(limit=25, cli=cli)
+    return generate_feed(request, page_dicts, cli)
+
+def generate_feed(request, page_dicts, cli):
+    page_dicts = [ sisyphus.models.convert_pub_date_to_datetime(x) for x in page_dicts ]
     f = django.utils.feedgenerator.Rss201rev2Feed(
         title=settings.RSS_TITLE,
         link=settings.RSS_LINK,
@@ -20,8 +41,6 @@ def feed(request, feed_url):
         feed_url=settings.RSS_FEED_URL,
         )
     cli = sisyphus.models.redis_client()
-    page_dicts = sisyphus.models.get_pages(limit=25, cli=cli)
-    page_dicts = [ sisyphus.models.convert_pub_date_to_datetime(x) for x in page_dicts ]
     for page in page_dicts:
         f.add_item(title=page['title'],
                    link="http://%s/%s/" % (settings.DOMAIN, page['slug']),
@@ -35,15 +54,9 @@ def about_module(cli=None):
     html = """<img src="/static/author.png">
 <p>Your delightful host.<br>
 Email: lethain[at]gmail<br>
-Develop at <a href="http://digg.com/">Digg</a>.<br>
-Used to <a href="http://developer.yahoo.com/search/boss/">Yahoo! BOSS</a>.</p>"""
+Develop at <a href="http://socialcode.com/">SocialCode</a>.<br>
+Used to <a href="http://digg.com/">Digg</a>, and <a href="http://developer.yahoo.com/search/boss/">Y!</a>.</p>"""
     return { 'title':'Will Larson', 'html':html }
-
-def analytics_module(cli=None):
-    "Analytics module."
-    html = """<p>Recent activity&hellip;</p>"""
-    # return { 'title':'Analytics', 'html':html }
-    return None
 
 def storylist_module(key, title, more_link=None, limit=3, cli=None, page=None):
     cli = cli or sisyphus.models.redis_client()
@@ -62,9 +75,35 @@ def trending_module(limit=3, page=None, cli=None):
                             limit=limit,
                             page=page)
 
+def site_analytics_module(cli=None):
+    "Create site analytics module."
+    data = sisyphus.analytics.abbreviated_site_analytics(cli=cli, max_results=3)
+    more_link = "<a href=\"/analytics/\">More&hellip;</a>"
+    html = "<ul>%s<li>%s</li></ul>" % ("".join("<li>%s (%s)</li>" % (x,y) for x,y in data), more_link)
+    return { 'title': 'Top Referrers', 'html':html }
+
+def page_analytics_module(limit=3, page=None, cli=None):
+    "Create page analytics module."
+    try:
+        data = sisyphus.analytics.page_analytics(page, cli=cli, num_refs=0, days_back=0)
+        lis = [("Views", data['views'])]
+        if data['avg_daily_views']:
+            lis.append(("Daily Views", data['avg_daily_views']))
+        more_link = "<a href=\"/analytics/%s/\">More&hellip;</a>" % (page['slug'],)
+        html = "<ul>%s<li>%s</li></ul>" % ("".join("<li>%s: %s</li>" % li for li in lis), more_link)
+        return { 'title': 'Page Analytics', 'html':html }
+    except:
+        return None
+
 def tags_list(request):
     cli = sisyphus.models.redis_client()
-    context = {'tags': sisyphus.models.tags(limit=1000, cli=cli),
+
+    # 'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
+
+    tags = sisyphus.models.tags(limit=1000, cli=cli)
+    context = {'tags': tags,
+               'html_title':"Tags ordered by number of pages",
+               'nav_tags': tags[:getattr(settings,'NUM_TAGS_NAV', 8)],
                'modules': default_modules(None, limit=5, cli=cli)
                }
     return render_to_response('sisyphus/tag_list.html', context, context_instance=RequestContext(request))
@@ -120,6 +159,7 @@ def default_modules(page, extras=[], limit=3, cli=None):
     return [ y for x,y in active_modules ]
 
 def render_list(request, key, base_url, title, cli=None):
+    cli = sisyphus.models.redis_client()
     try:
         offset = int(request.GET.get('offset', 0))
     except ValueError:
@@ -135,15 +175,17 @@ def render_list(request, key, base_url, title, cli=None):
     per_page = 10
     pages = [ x for x in range(0, total_pages, per_page)]
 
-    extra_modules = [(0.3, tags_module(limit=3, cli=cli))]
+    extra_modules = [(0.1, site_analytics_module(cli=cli)),
+                      (0.3, tags_module(limit=3, cli=cli))]
     context = {'pages': page_dicts,
                'pager_show': (len(page_dicts) >= per_page) or offset > per_page,
                'pager_offset': offset,
+               'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
                'pager_next': offset + per_page,
                'pager_prev': offset - per_page,
                'pager_remaining': offset + per_page < total_pages,
                'pager_pages': pages,
-               'html_title': title,
+               'html_title': STORY_LIST_TITLES.get(title, TAG_LIST_TITLE % title),
                'modules': default_modules(None, extra_modules, limit=5, cli=cli),
                }
     return render_to_response('sisyphus/page_list.html', context, context_instance=RequestContext(request))
@@ -169,6 +211,48 @@ def story_list(request, list_type, cli=None):
     else:
         raise Http404
 
+def analytics(request):
+    cli = sisyphus.models.redis_client()
+    extra_modules = [(0.3, tags_module(limit=3, cli=cli))]
+    context = { 'domain': settings.DOMAIN,
+                'modules': default_modules(None, extra_modules, cli=cli),
+                'analytics': sisyphus.analytics.site_analytics(cli=cli),
+                'ana_min_page_pv': settings.MIN_PAGE_PV,
+                'ana_min_ref_pv': settings.MIN_PAGE_REF_PV,
+                'ana_min_useragent': settings.MIN_USERAGENT,
+                'ana_max_results': settings.MAX_ANALYTICS_RESULTS,
+
+
+                }
+    return render_to_response('sisyphus/analytics.html', context, context_instance=RequestContext(request))
+
+def page_analytics(request, slug):
+    "Render a page's analytics."
+    cli = sisyphus.models.redis_client()
+    object = sisyphus.models.get_page(slug, cli=cli)
+    if object and object['published']:
+        object = sisyphus.models.convert_pub_date_to_datetime(object)
+        extra_modules = []
+        if object['published']:
+            sisyphus.models.track(request, object, cli=cli)
+            before_mod, after_mod = context_module(object, cli=cli)
+            extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
+                             (0.71, before_mod),
+                             (0.73, after_mod),
+                             ]
+
+        context = { 'page': object,
+                    'domain': settings.DOMAIN,
+                    'twitter_username': settings.TWITTER_USERNAME,
+                    'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
+                    'modules': default_modules(object, extra_modules, cli=cli),
+                    'analytics': sisyphus.analytics.page_analytics(object, cli=cli),
+                    'ana_max_results': settings.MAX_ANALYTICS_RESULTS,
+                    'ana_min_page_ref_pv':settings.MIN_PAGE_REF_PV,
+                    }
+        return render_to_response('sisyphus/page_analytics.html', context, context_instance=RequestContext(request))
+    else:
+        raise Http404
 
 def page(request, slug):
     "Render a page."
@@ -180,8 +264,8 @@ def page(request, slug):
         if object['published']:
             sisyphus.models.track(request, object, cli=cli)
             before_mod, after_mod = context_module(object, cli=cli)
-            extra_modules = [(0.7, similar_pages_module(object, cli=cli)),
-                             (0.1, analytics_module(cli=cli)),
+            extra_modules = [(0.73, similar_pages_module(object, cli=cli)),
+                             (0.74, page_analytics_module(page=object, cli=cli)),
                              (0.71, before_mod),
                              (0.72, after_mod),
                              ]
@@ -189,6 +273,7 @@ def page(request, slug):
         context = { 'page': object,
                     'domain': settings.DOMAIN,
                     'twitter_username': settings.TWITTER_USERNAME,
+                    'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
                     'modules': default_modules(object, extra_modules, cli=cli),
                     'disqus_shortname': settings.DISQUS_SHORTNAME,
                     }
@@ -213,6 +298,8 @@ def search(request):
     extra_modules = []
     context = { 'pages': pages,
                 'query': query,
+                'html_title': "%s pages match \"%s\"" % (len(pages), query),
+                'nav_tags': sisyphus.models.tags(limit=getattr(settings,'NUM_TAGS_NAV', 8), cli=cli),
                 'modules': default_modules(None, extra_modules, cli=cli),
                     }
     return render_to_response('sisyphus/search.html', context, context_instance=RequestContext(request))
