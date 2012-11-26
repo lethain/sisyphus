@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block canonnical %}<link rel="canonical" href="http://{{ domain }}/{{ page.slug }}/">{% endblock %}
+{% block opengraph %}
+<meta property="og:title" content="{{ page.title }}"/>
+<meta property="og:type" content="article"/>
+<meta property="og:url" content="http://{{ domain }}/{{ page.slug }}/"/>
+<meta property="og:description" content="{{ page.summary }}"/>
+{% endblock %}
 
 {% block title %}{{ page.title }} - {{ block.super }}{% endblock %}
 
