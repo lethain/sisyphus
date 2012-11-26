@@ -176,6 +176,10 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
     margin: 10px 20px;
 }
 
+#body .page .social a.hn-share-button {
+    display: none;
+}
+
 
 #body .summary, #body .page .text p, #body .page pre, #body .page li {
     margin: 10px 10px 10px 20px;
