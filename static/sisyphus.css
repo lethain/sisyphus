@@ -243,6 +243,7 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
 
 #body .page .text {
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 #body .page .text ul {

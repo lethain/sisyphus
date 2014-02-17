@@ -8,21 +8,8 @@
 {% endblock %}
 
 {% block title %}{{ page.title }} - {{ block.super }}{% endblock %}
-
 {% if page.startjs %} {% block extrajs %}{{ block.super }}{{ page.startjs|safe }}{% endblock %}{% endif %}
-
-{% block extrajsend %}
-{{ block.super }}
-{% if page.endjs %}{{ page.endjs|safe }}{% endif %}
-<script>
-    (function(d, t) {
-        var g = d.createElement(t),
-            s = d.getElementsByTagName(t)[0];
-        g.src = '/static/hn.min.js';
-        s.parentNode.insertBefore(g, s);
-    }(document, 'script'));
-</script>
-{% endblock %}
+{% if page.endjs %} {% block extrajsend %}{{ block.super }}{{ page.endjs|safe }}{% endblock %}{% endif %}
 
 {% block body %}
 <div class="page">
