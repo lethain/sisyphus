@@ -52,8 +52,8 @@ def generate_feed(request, page_dicts, cli):
 def about_module(cli=None):
     "An 'About Me' module."
     html = """<img src="/static/author.png">
-<p>Eng leader at <a href="http://socialcode.com/">SocialCode</a>.<br>
-Used to <a href="http://digg.com/">Digg</a>, and <a href="http://developer.yahoo.com/search/boss/">Y!</a>.<br>
+<p>Eng leader at <a href="http://socialcode.com/">SocialCode</a><br>
+Used to <a href="http://digg.com/">Digg</a>, and <a href="http://developer.yahoo.com/search/boss/">Y!</a><br>
 Email: lethain[at]gmail</p>"""
     return { 'title':'Will Larson', 'html':html }
 
