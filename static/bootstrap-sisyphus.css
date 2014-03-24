@@ -8,6 +8,10 @@ body {
    padding-left: 0;
 }
 
+#body {
+    margin-bottom: 20px;
+}
+
 #body h1.title {
     color: #777;
     font-size: 16px;
