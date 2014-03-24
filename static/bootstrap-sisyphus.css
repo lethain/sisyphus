@@ -110,7 +110,7 @@ body {
 }
 
 #body .page .text p {
-    margin-top: 10px;
+    margin: 10px 5px;
 }
 
 #body .page .text p + p {
@@ -127,9 +127,7 @@ body {
 
 #body .page .text blockquote {
     margin: 10px 40px;
-    padding: 5px 10px;
     color: #222;
-    border-left: 3px solid;
 }
 #body .page .text blockquote p {
     margin-left: 0;
