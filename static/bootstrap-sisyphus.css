@@ -113,6 +113,21 @@ body {
     width: 500px;
     text-align: justify;
 }
+#body .page li {
+    max-width: 500px;
+}
+
+@media (max-width: 600px) {
+    #body .page li {
+        max-width: auto;
+    }
+    #body .summary, #body .page .text p {
+        width: auto;
+    }
+    #body .page .text img {
+        max-width: 100%;
+    }
+}
 
 #body .page .text p {
     margin: 10px 5px;
@@ -122,9 +137,6 @@ body {
     margin-top: 15px;
 }
 
-#body .page li {
-    max-width: 500px;
-}
 
 #body .page .highlight pre {
     margin-bottom: 0;
