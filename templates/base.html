@@ -34,7 +34,7 @@
       {% if module.html %}{{ module.html|safe }}{% endif %}
       {% if module.pages %}
         <ul class="story-list list-unstyled">
-	{% for module_page in module.pages %}<li><a href="/{{ module_page.slug }}/">{{ module_page.title|truncatewords:5 }}</a></li>{% endfor %}
+	{% for module_page in module.pages %}<li><a title="{{ module_page.title}}" href="/{{ module_page.slug }}/">{{ module_page.title|truncatewords:4 }}</a></li>{% endfor %}
 	{% if module.more_link %}<li><a href="{{ module.more_link|safe }}">More&hellip;</a></li>{% endif %}
         </ul>
       {% endif %}
