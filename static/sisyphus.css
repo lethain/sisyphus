@@ -172,10 +172,6 @@ h1, h2, h3, h4, h5, #hd, #searchbutton, #searchbox {
      float: right;
 }
 
-#body .page .social {
-    margin: 10px 20px;
-}
-
 #body .page .social a.hn-share-button {
     display: none;
 }

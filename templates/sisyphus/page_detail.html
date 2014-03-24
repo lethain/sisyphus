@@ -14,9 +14,18 @@
 {% block body %}
 <div class="page">
   <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
-  {% if page.published %}<span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
-   {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
-  {% include "sisyphus/tags.html" %}
+  <div class="row">
+     <div class="col-md-4">
+       {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
+     </div>
+     <div class="col-md-6">
+       {% include "sisyphus/tags.html" %}
+     </div>
+     <div class="col-md-2">
+       {% if page.published %}<span class="date col-md-2">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
+     </div>
+  </div>
+
    <div class="text">
   {{ page.html|safe }}
    </div>

@@ -1,25 +1,31 @@
-<div id="hd">
-  <div class="grid_4">
-    <h1><a href="/">Irrational Exuberance</a></h1>
-  </div>
-  <ul id="nav" class="grid_4 prefix_1">
-    <li><a href="http://github.com/lethain">Projects</a></li>
-    <li><a href="http://www.linkedin.com/pub/will-larson/3/b54/a44">Resume</a></li>
-    <li><a href="/will-larson/">About</a></li>
-    <li><a href="/feeds/">RSS</a></li>
-  </ul>
-    <form action="/search/" method="GET" class="grid_3">
-      <input id="searchbox" name="q" value="{{ query }}">
-      <input id="searchbutton" type="submit" value="Search">
-    </form>
-<br class="clear">
-{% if nav_tags %}
-<ul id="tagnav" class="grid_12">
-{% for tag in nav_tags %}<li><a href="/tags/{{ tag.0 }}/">{{ tag.0 }} ({{ tag.1 }})</a></li>{% endfor %}
-<li><a href="/tags/">&hellip;</a></li>
+<nav class="navbar navbar-sisyphus" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Irrational Exuberance</a>
+    </div>
 
-</ul>
+    <form action="/search/" method="GET" class="navbar-form pull-right" role="search">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="search" id="searchbox" name="q" value="{{ query }}">
+      </div>
+      <button type="submit" class="btn btn-default" alt="Search"><span class="glyphicon glyphicon-search"></span></button>
+    </form>
+
+    <ul class="nav navbar-nav pull-right">
+      <li><a href="https://twitter.com/Lethain">Twitter</a></li>
+      <li><a href="http://github.com/lethain">GitHub</a></li>
+      <li><a href="http://www.linkedin.com/pub/will-larson/3/b54/a44">LinkedIn</a></li>
+      <li><a href="/feeds/">RSS</a></li>
+    </ul>
+  </div>
+</nav>
+{% if nav_tags %}
+<div class="container">
+  <ul class="nav nav-pills">
+    {% for tag in nav_tags %}<li><a href="/tags/{{ tag.0 }}/"><span class="badge pull-right">{{ tag.1 }}</span> {{ tag.0 }}</a></li>{% endfor %}
+    <li><a href="/tags/">&hellip;</a></li>
+  </ul>
+</div>
 {% endif %}
 
-</div>
 

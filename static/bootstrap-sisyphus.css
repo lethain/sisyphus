@@ -1,0 +1,151 @@
+body {
+    background: #F0F0F0;
+}
+
+.date {
+    color: #777;
+    padding-top: 10px;
+}
+
+#body h1.title {
+    color: #777;
+    font-size: 16px;
+}
+
+#body .page h2 {
+    font-size: 24px;
+    border-bottom: 1px solid #777;
+}
+#body .page h2:hover {
+    border-bottom: 1px solid #428bca;
+}
+
+
+#body .page h2 a {
+    color: #111;
+}
+#body .page h2 a:hover {
+    text-decoration: none;
+    color: #428bca;
+}
+
+
+.module {
+    margin-bottom: 10px;
+}
+
+.module img {
+    border: 1px solid #999;
+}
+
+.module h2 {
+    font-size: 16px;
+    margin-top: 0;
+    border-bottom: 1px solid #999;
+}
+
+.module ul.list-unstyled {
+    padding-left: 10px;
+}
+
+
+#body, .navbar.navbar-sisyphus {
+    background: #FEFEFE;
+}
+
+.navbar.navbar-sisyphus a {
+    color: #777;
+}
+.navbar.navbar-sisyphus a:hover {
+    background: #EEE;
+}
+
+.navbar-header {
+    padding-left: 10px;
+}
+
+.navbar.navbar-sisyphus {
+    margin-bottom: 0;
+}
+
+
+.nav-pills {
+  font-size: 12px;   
+}
+.nav-pills .badge {
+    color: #777;
+    background: #F0F0F0;
+}
+.nav-pills a {
+    color: #777;
+}
+.nav.nav-pills a:hover {
+    background: #FFF;
+}
+
+#body .nav.nav-pills a:hover {
+    background: #EEE;
+}
+
+
+
+#body {
+    padding: 5px 20px 10px 20px;
+}
+
+#ft {
+    padding: 20px 0 10px 0;
+    text-align: center;
+}
+
+/* Render articles */
+
+#body .summary, #body .page .text p {
+    width: 500px;
+    text-align: justify;
+}
+
+#body .page .text p {
+    margin-top: 10px;
+}
+
+#body .page .text p + p {
+    margin-top: 15px;
+}
+
+#body .page li {
+    max-width: 500px;
+}
+
+#body .page .highlight pre {
+    margin-bottom: 0;
+}
+
+#body .page .text blockquote {
+    margin: 10px 40px;
+    padding: 5px 10px;
+    color: #222;
+    border-left: 3px solid;
+}
+#body .page .text blockquote p {
+    margin-left: 0;
+}
+
+#body table {
+    margin: 10px 10px 10px 30px;
+}
+#body .analytics table {
+    width: 500px;
+}
+
+#body table td {
+    border: 1px solid #777;
+    padding: 5px;
+}
+#body table thead {
+    font-weight: bold;
+}
+
+#body .social {
+  margin: 10px 0 10px 0;
+}

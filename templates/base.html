@@ -1,11 +1,12 @@
 {% load compressed %}
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
 <meta name="author" content="Will Larson" /> 
 <meta name="description" content="Will Larson&#39;s blog about programming and other things." /> 
 <meta name="keywords" content="Blog Will Larson Programming Life" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="alternate" type="application/rss+xml" title="Page Feed" href="/feeds/" /> 
 {% block canonnical %}{% endblock %}
 {% block opengraph %}{% endblock %}
@@ -19,31 +20,33 @@
 {% block extrajs %}{% endblock %}
 </head>
 <body>
-<div class="container container_12">
 {% include "header.html" %}
-
-<div class="grid_9">
-  <div id="body">
-  {% block body %}{% endblock %}
+<div class="container">
+  <div class="row">
+  <div class="col-md-9">
+    <div id="body">{% block body %}{% endblock %}</div>
+  </div>
+  <div id="modules" class="col-md-3">
+    {% block modules %}
+    {% for module in modules %}
+    <div class="module">
+      {% if module.title %}<h2>{{ module.title }}</h2>{% endif %}
+      {% if module.html %}{{ module.html|safe }}{% endif %}
+      {% if module.pages %}
+        <ul class="story-list list-unstyled">
+	{% for module_page in module.pages %}<li><a href="/{{ module_page.slug }}/">{{ module_page.title|truncatewords:5 }}</a></li>{% endfor %}
+	{% if module.more_link %}<li><a href="{{ module.more_link|safe }}">More&hellip;</a></li>{% endif %}
+        </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+    {% endblock %}
+  </div>
   </div>
 </div>
-<div id="modules" class="grid_3">
-{% block modules %}
-{% for module in modules %}
-<div class="module">
-{% if module.title %}<h2>{{ module.title }}</h2>{% endif %}
-{% if module.html %}{{ module.html|safe }}{% endif %}
-{% if module.pages %}<ul class="story-list">
-{% for module_page in module.pages %}<li><a href="/{{ module_page.slug }}/">{{ module_page.title|truncatewords:5 }}</a></li>{% endfor %}
-{% if module.more_link %}<li><a href="{{ module.more_link|safe }}">More&hellip;</a></li>{% endif %}
-</ul>{% endif %}
-</div>
-{% endfor %}
-{% endblock %}
-</div>
 
-<div class='clear'>&nbsp;</div> 
-{% include "footer.html" %}
+<div class="container">
+  {% include "footer.html" %}
 </div>
 {% block extrajsend %}{% endblock %}
 </body>

@@ -51,10 +51,15 @@ def generate_feed(request, page_dicts, cli):
 
 def about_module(cli=None):
     "An 'About Me' module."
-    html = """<img src="/static/author.png">
-<p>Eng leader at <a href="http://socialcode.com/">SocialCode</a><br>
-Used to <a href="http://digg.com/">Digg</a>, and <a href="http://developer.yahoo.com/search/boss/">Y!</a><br>
-Email: lethain[at]gmail</p>"""
+    html = """
+    <img class="pull-right" src="/static/author.png">
+    <p>Software engineer, technical leader, sci-fi reader, and so on. Born in NC, living in SF, and glad to grab a coffee.</p>
+    <p>Email: lethain[at]gmail</p>
+    <p>Before: <a href="http://socialcode.com/">SocialCode</a>,
+      <a href="http://digg.com/">Digg</a>,
+      <a href="http://developer.yahoo.com/search/boss/">Y!</a>
+    </p>    
+    """
     return { 'title':'Will Larson', 'html':html }
 
 def storylist_module(key, title, more_link=None, limit=3, cli=None, page=None):
@@ -78,7 +83,7 @@ def site_analytics_module(cli=None):
     "Create site analytics module."
     data = sisyphus.analytics.abbreviated_site_analytics(cli=cli, max_results=3)
     more_link = "<a href=\"/analytics/\">More&hellip;</a>"
-    html = "<ul>%s<li>%s</li></ul>" % ("".join("<li>%s (%s)</li>" % (x,y) for x,y in data), more_link)
+    html = "<ul class=\"list-unstyled\">%s<li>%s</li></ul>" % ("".join("<li>%s (%s)</li>" % (x,y) for x,y in data), more_link)
     return { 'title': 'Top Referrers', 'html':html }
 
 def page_analytics_module(limit=3, page=None, cli=None):
@@ -89,7 +94,7 @@ def page_analytics_module(limit=3, page=None, cli=None):
         if data['avg_daily_views']:
             lis.append(("Daily Views", data['avg_daily_views']))
         more_link = "<a href=\"/analytics/%s/\">More&hellip;</a>" % (page['slug'],)
-        html = "<ul>%s<li>%s</li></ul>" % ("".join("<li>%s: %s</li>" % li for li in lis), more_link)
+        html = "<ul class=\"list-unstyled\">%s<li>%s</li></ul>" % ("".join("<li>%s: %s</li>" % li for li in lis), more_link)
         return { 'title': 'Page Analytics', 'html':html }
     except:
         return None
@@ -110,8 +115,8 @@ def tags_list(request):
 def tags_module(offset=0, limit=10, cli=None):
     "Create module for tags."
     tags = sisyphus.models.tags(offset, limit, cli=cli)
-    html = ['<ul class="tags">'] + \
-        [ '<li><a href="/tags/%s/">%s</a> (%s)</li>' % (x,x,y) for x,y in tags ] + \
+    html = ['<ul class="tags nav nav-pills nav-stacked">'] + \
+        [ '<li><a href="/tags/%s/"><span class="badge pull-right">%s</span>%s</a></li>' % (x,y,x) for x,y in tags ] + \
         ['<li><a href="/tags/">More&hellip;</a></li>', '</ul>']
     return { 'title': 'Tags', 'html':'\n'.join(html) }
 
@@ -174,8 +179,8 @@ def render_list(request, key, base_url, title, cli=None):
     per_page = 10
     pages = [ x for x in range(0, total_pages, per_page)]
 
-    extra_modules = [(0.1, site_analytics_module(cli=cli)),
-                      (0.3, tags_module(limit=3, cli=cli))]
+    extra_modules = [(0.3, tags_module(limit=3, cli=cli))]
+        
     context = {'pages': page_dicts,
                'pager_show': (len(page_dicts) >= per_page) or offset > per_page,
                'pager_offset': offset,

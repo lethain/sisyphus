@@ -2,10 +2,14 @@
 {% block title %}Tags on {{ block.super }}{% endblock %}
 {% block body %}
 <h1 class="title">{{ html_title }}</h1>
-<ul class="taglist">
-{% for tag in tags %}
-{% if tag.1 %}<li><a href="/tags/{{ tag.0 }}/">{{ tag.0 }}</a>: {{ tag.1 }}</li>{% endif %}
-{% endfor %}
+<div class="row">
+<div class="col-md-4">
+<ul class="taglist nav nav-bills nav-stacked">
+{% for tag in tags %}{% if tag.1 %}
+<li><a href="/tags/{{ tag.0 }}/"><span class="badge pull-right">{{ tag.1 }}</span>{{ tag.0 }}</a></li>
+{% endif %}{% endfor %}
 </ul>
+</div>
+</div>
 {% endblock %}
 

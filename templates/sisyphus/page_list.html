@@ -6,9 +6,19 @@
 {% for page in pages %}
   <div class="page">
     <h2><a href="/{{ page.slug }}/">{{ page.title }}</a></h2>
-    <span class="date">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>
-    {% include "sisyphus/tags.html" %}
-    <p class="summary">{{ page.summary|safe }}</p>
+    <div class="row">
+      <div class="col-md-10">
+	{% include "sisyphus/tags.html" %}
+      </div>
+      <div class="col-md-2">
+	<span class="date col-md-2">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>
+      </div>
+    </div>
+    <div class="row">
+    <div class="col-md-8">
+      <p class="summary">{{ page.summary|safe }}</p>
+    </div>
+    </div>
   </div>
 {% endfor %}
 </div>

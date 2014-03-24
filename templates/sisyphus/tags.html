@@ -1,4 +1,9 @@
 {% if page.tags %}
-{% for tag in page.tags|slice:":5" %}<span class="tag"><a href="/tags/{{ tag.1 }}/">{{ tag.1 }}</a><span class="tagcount">({{ tag.0 }})</span></span>{% endfor %}
-<br class="clear">
+<ul class="nav nav-pills">
+  {% for tag in page.tags|slice:":5" %}
+  <li>
+    <a href="/tags/{{ tag.1 }}/"><span class="badge pull-right">{{ tag.0 }}</span> {{ tag.1 }}</a>
+  </li>
+  {% endfor %}
+</ul>
 {% endif %}

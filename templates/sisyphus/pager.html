@@ -1,16 +1,13 @@
 {% if pager_show %}
-<div class="bottom">
   <ul class="pagination">
-    {% if pager_offset %}<li><a href="?offset={{ pager_prev }}">&larr;</a></li>{% endif %}
+    <li{% if pager_prev < 1 %} class="disabled"{% endif %}><a href="?offset={{ pager_prev }}">&larr;</a></li>
     {% for page_number in pager_pages %}
     {% ifequal pager_offset page_number %}
-    <li>{{ page_number|add:"1" }}</li>
+    <li class="disabled"><a href="#">{{ page_number|add:"1" }}</a></li>
     {% else %}
     <li><a href="?offset={{ page_number }}">{{ page_number|add:"1" }}</a></li>
     {% endifequal %}
     {% endfor %}
-    {% if pager_remaining %}<li><a href="?offset={{ pager_next }}">&rarr;</a></li>{% endif %}
+    <li{% if not pager_remaining %} class="disabled"{% endif %}><a href="?offset={{ pager_next }}">&rarr;</a></li>
   </ul>
-</div>
-<br class="clear">
 {% endif %}
