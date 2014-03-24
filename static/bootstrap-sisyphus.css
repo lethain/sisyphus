@@ -5,6 +5,7 @@ body {
 .date {
     color: #777;
     padding-top: 10px;
+   padding-left: 0;
 }
 
 #body h1.title {

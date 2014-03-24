@@ -16,13 +16,17 @@
   <h2>{% if not page.published %}<strong>DRAFT - </strong>{% endif %}<a href="/{{ page.slug }}">{{ page.title }}</a></h2>
   <div class="row">
      <div class="col-md-4">
-       {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
+       {% if page.published %}<span class="date col-md-6">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
      </div>
-     <div class="col-md-6">
+     <div class="col-md-8">
+       {% with "pull-right" as extra_cls %}
        {% include "sisyphus/tags.html" %}
+       {% endwith %}
      </div>
-     <div class="col-md-2">
-       {% if page.published %}<span class="date col-md-2">{{ page.pub_date|date:"SHORT_DATE_FORMAT" }}</span>{% endif %}
+  </div>
+  <div class="row">
+     <div class="col-md-4">
+       {% if page.published %}{% include "sisyphus/social.html" %}{% endif %}
      </div>
   </div>
 

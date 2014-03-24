@@ -1,5 +1,5 @@
 {% if page.tags %}
-<ul class="nav nav-pills">
+<ul class="nav nav-pills {{ extra_cls }}">
   {% for tag in page.tags|slice:":5" %}
   <li>
     <a href="/tags/{{ tag.1 }}/"><span class="badge pull-right">{{ tag.0 }}</span> {{ tag.1 }}</a>
