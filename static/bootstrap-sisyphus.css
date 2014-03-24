@@ -100,6 +100,11 @@ body {
 
 /* Render articles */
 
+#body .page .text img {
+    max-width: 620px;
+    border: 2px solid #999;
+}
+
 #body .summary, #body .page .text p {
     width: 500px;
     text-align: justify;
